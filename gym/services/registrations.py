@@ -50,10 +50,14 @@ class Registration_service:
         return registration
 
     def cancel_registration(self, member_id: int, class_id: int) -> Registration:
-        pass
+        registration = self.find_active(member_id, class_id)
+        if registration is None:
+            raise ValueError("No active registration found")
+        registration.cancel()
+        return registration
 
     def get_member_registrations(self, member_id: int) -> list[Registration]:
-        pass
+        return [r for r in self.registrations if r.member_id == member_id and r.is_active]
 
     def get_class_members(self, class_id: int) -> list[Registration]:
         return [r for r in self.registrations if r.class_id == class_id and r.is_active]

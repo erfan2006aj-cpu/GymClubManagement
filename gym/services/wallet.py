@@ -85,7 +85,7 @@ class WalletService:
             try:
                 trans = self._from_line(stripped)
                 self._transactions.append(trans)
-            except (ValueError, KeyError):
+            except Exception:
                 print(f"خط  {number} نامعتبره")
 
     def _save(self, trans):

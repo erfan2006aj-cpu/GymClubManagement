@@ -226,7 +226,7 @@ class WalletService:
             member.wallet_balance -= price
 
             try:
-                tub = self.subscription_service.create_subscription(
+                sub = self.subscription_service.create_subscription(
                     member_id=member_id,
                     kind=plan_type,
                     amount=price,

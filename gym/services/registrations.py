@@ -56,5 +56,5 @@ class Registration_service:
         pass
 
     def get_class_members(self, class_id: int) -> list[Registration]:
-        pass
+        return [r for r in self.registrations if r.class_id == class_id and r.is_active]
     

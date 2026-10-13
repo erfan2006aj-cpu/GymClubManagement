@@ -264,11 +264,7 @@ class Registration:
     id: int
     class_id: int
     member_id: int
-<<<<<<< HEAD
     tracking_number: str
-=======
-    tracking_number: int
->>>>>>> 370d740 (fixing registeration class atribute types)
     is_active: bool
     registration_date: datetime
 

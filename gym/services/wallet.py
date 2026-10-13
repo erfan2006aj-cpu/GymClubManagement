@@ -228,7 +228,7 @@ class WalletService:
             try:
                 tub = self.subscription_service.create_subscription(
                     member_id=member_id,
-                    plan_type=plan_type,
+                    kind=plan_type,
                     amount=price,
                 )
             except Exception:

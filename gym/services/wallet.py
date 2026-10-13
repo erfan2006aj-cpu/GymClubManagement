@@ -205,3 +205,44 @@ class WalletService:
         self.user_service.save()
 
         return trans
+
+
+    def pay_subscription(self, member_id, plan_type):
+
+            member = self._get_member(member_id)
+
+            if self.subscription_service is None:
+            raise ValidationError("اشتراک دردسترس نیست!")
+
+            try:
+                price = self.subscription_service.get_plan_price(plan_type)
+                label = self.subscription_service.get_plan_label(plan_type)
+            except (KeyError, ValueError):
+                raise ValidationError("اشتراک نامعتبر")
+
+            if member.wallet_balance < price:
+                raise InsufficientBalanceError("موجودی کافی نیست")
+
+            member.wallet_balance -= price
+
+            try:
+                tub = self.subscription_service.create_subscription(
+                    member_id=member_id,
+                    plan_type=plan_type,
+                    amount=price,
+                )
+            except Exception:
+                member.wallet_balance += price
+                raise
+
+            self.user_service.save()
+
+            trans = self._record(
+                member_id=member_id,
+                tx_type=Transaction.TYPE_PAYMENT,
+                amount=price,
+                description=f"خرید {label}",
+                tracking_number=str(sub.tracking_number),
+            )
+
+            return trans

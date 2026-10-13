@@ -23,3 +23,11 @@ def save_data(name, data):
 
     with open(path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+def load_users():
+    return load_data("users")
+
+
+def save_users(users):
+    save_data("users", users)
+

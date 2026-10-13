@@ -158,3 +158,50 @@ class WalletService:
             raise
 
         return trans
+
+ 
+    def get_balance(self, member_id):
+        member = self._get_member(member_id)
+        return member.wallet_balance
+
+    def get_transactions(self, member_id=None):
+        result = []
+        for trans in self._transactions:
+            if member_id is None or trans.member_id == member_id:
+                result.append(trans)
+
+        return sorted(result, key=lambda t: t.date, reverse=True)
+
+    
+    def charge_wallet(self, member_id, amount, card, exp_month, exp_year, password, cvv2):
+
+        try:
+            amount = float(amount)
+            exp_month = int(exp_month)
+            exp_year = int(exp_year)
+        except (TypeError, ValueError):
+            raise ValidationError("ورودی‌ کارت نامعتبر")
+
+        if amount <= 0:
+            raise ValidationError("مبلغ باید بیشتر از صفر باشد")
+
+        member = self._get_member(member_id)
+
+        api = BankAPI()
+        try:
+            payment_id = api.pay(card, exp_month, exp_year, password, cvv2, amount)
+        except ValueError as error:
+            raise ValidationError(f"پرداخت ناموفق: {error}")
+
+        trans = self._record(
+            member_id=member_id,
+            tx_type=Transaction.TYPE_CHARGE,
+            amount=amount,
+            description="شارژ کیف پول",
+            tracking_number=str(payment_id),
+        )
+
+        member.wallet_balance += amount
+        self.user_service.save()
+
+        return trans

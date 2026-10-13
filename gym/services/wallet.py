@@ -212,7 +212,7 @@ class WalletService:
             member = self._get_member(member_id)
 
             if self.subscription_service is None:
-            raise ValidationError("اشتراک دردسترس نیست!")
+                raise ValidationError("اشتراک دردسترس نیست!")
 
             try:
                 price = self.subscription_service.get_plan_price(plan_type)

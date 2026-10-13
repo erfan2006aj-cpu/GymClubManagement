@@ -35,6 +35,7 @@ def add_user(
     email,
     role,
     existing_users=None,
+    is_active=True,
 ):
     if not isinstance(name, str) or not name.strip():
         raise ValueError("Name cannot be empty.")
@@ -71,6 +72,7 @@ def add_user(
             username=username,
             password=password,
             email=email,
+            is_active=is_active,
         )
     else:
         user = Coach(
@@ -79,6 +81,7 @@ def add_user(
             username=username,
             password=password,
             email=email,
+            is_active=is_active,
         )
 
     return user
@@ -98,6 +101,7 @@ def update_user(
     user,
     name=None,
     username=None,
+    password=None,
     email=None,
     existing_users=None,
 ):
@@ -124,6 +128,10 @@ def update_user(
         if not is_valid_email(email):
             raise ValueError("Invalid email address.")
         user.email = email.strip()
+    if password is not None:
+        if not isinstance(password, str) or not password.strip():
+            raise ValueError("Password cannot be empty.")
+        user.password = password.strip()
 
     return user
 

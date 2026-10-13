@@ -9,7 +9,7 @@ class Registration_service:
     def generate_traking_number(self) -> int:
         while True:
             number = random.randint(100000, 999999)
-            if not any(r.tracking_number == tracking for r in self.registrations):
+            if not any(r.tracking_number == number for r in self.registrations):
                 return number
 
     def find_active(self, member_id: int, class_id: int):

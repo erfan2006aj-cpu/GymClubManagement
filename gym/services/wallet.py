@@ -86,7 +86,7 @@ class WalletService:
                 trans = self._from_line(stripped)
                 self._transactions.append(trans)
             except (ValueError, KeyError):
-                print(f"خط{number}نامعتبره")
+                print(f"خط  {number} نامعتبره")
 
     def _save(self, trans):
         line = self._to_line(trans)
@@ -112,3 +112,49 @@ class WalletService:
             all_lines.insert(insert_at, line)
 
         self.storage.write_lines(all_lines)
+
+    def _next_id(self):
+        if len(self._transactions) == 0:
+            return 1
+
+        biggest = 0
+        for trans in self._transactions:
+            if trans.id > biggest:
+                biggest = trans.id
+
+        return biggest + 1
+
+    def _get_member(self, member_id):
+        member = self.user_service.find_by_id(member_id)
+
+        if member is None:
+            raise NotFoundError("عضو پیدا نشد")
+
+        if not isinstance(member, Member):
+            raise ValidationError("کاربر عضو نیست")
+
+        if not member.is_active:
+            raise AccountDisabledError("حساب غیرفعال است.")
+
+        return member
+
+    def _record(self, member_id, tx_type, amount, description, tracking_number):
+        trans = Transaction(
+            id=self._next_id(),
+            member_id=member_id,
+            transaction_type=tx_type,
+            amount=amount,
+            date=datetime.now(),
+            description=description,
+            tracking_number=tracking_number,
+        )
+
+        self._transactions.append(trans)
+
+        try:
+            self._save(trans)
+        except OSError:
+            self._transactions.remove(trans)
+            raise
+
+        return trans

@@ -122,7 +122,7 @@ class SubscriptionService:
 
             try:
                 self._subscriptions.append(self._from_line(t))
-            except (ValueError, KeyError):
+            except Exception:
                 print(f"خط {number} نامعتبره")
 
     def _save(self, sub):

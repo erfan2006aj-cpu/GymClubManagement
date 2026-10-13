@@ -264,8 +264,8 @@ class Registration:
     member_id: int
     tracking_number: str
     is_active: bool = True
-    registration_date: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M"))
-
+    registration_date: datetime = field(default_factory=datetime.now)
+    
     def cancel(self) -> None:
         self.is_active = False
         

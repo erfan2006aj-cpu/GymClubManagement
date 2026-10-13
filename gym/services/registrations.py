@@ -7,7 +7,7 @@ class Registration_service:
         self.class_service = class_service
         self.next_id = max([r.id for r in registrations], default=0) + 1
 
-    def generate_traking_number(self) -> int:
+    def generate_tracking_number(self) -> int:
         while True:
             number = random.randint(100000, 999999)
             if not any(r.tracking_number == number for r in self.registrations):

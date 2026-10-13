@@ -43,7 +43,7 @@ class Registration_service:
             class_id=class_id,
             tracking_number=self.generate_tracking_number(),
             registration_date=datetime.now(),
-            is_active=True,
+            is_active=True
         )
         self.registrations.append(registration)
         self.next_id += 1

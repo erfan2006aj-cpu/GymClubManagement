@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 from gym.models import Registration
 class Registration_service:

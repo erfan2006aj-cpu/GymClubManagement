@@ -22,7 +22,7 @@ class Registration_service:
     def is_registered(self, member_id: int, class_id: int) -> bool:
         return self.find_active(member_id, class_id) is not None
 
-    def register(self,member,class_id: int,subscription_service,) -> Registration:
+    def register(self,member,class_id: int,subscription_service) -> Registration:
 
         gym_class = self.class_service.find_by_id(class_id)
         if gym_class is None:

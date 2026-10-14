@@ -8,7 +8,7 @@ WORKOUTS_FILE = "data/gym_data.txt"
 
 def workout_to_line(workout):
     #Workout --> String
-    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
+    exercise_str= ";" .join(f"{ex.name},{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
         for ex in workout.exercises
     )
     return(
@@ -61,7 +61,7 @@ class WorkoutService:
         self.workouts = workouts if workouts else self.load_all()
         self.next_id = max([w.id for w in self.workouts if w.id], default=0) + 1
 
-    def load_all(self):
+    def _load_all(self):
         storage = Storage(WORKOUTS_FILE)
         workouts = []
         marker = "[WORKOUTS]"
@@ -232,7 +232,7 @@ class WorkoutService:
             raise NotFoundError("Workout not found.")
         return workout
     
-    def get_workout_by_coach(self,coach_id):
+    def get_workouts_by_coach(self,coach_id):
         return [w for w in self.workouts if str(w.coach_id) == str(coach_id)]
     
     def get_workouts_by_member(self,member_id):

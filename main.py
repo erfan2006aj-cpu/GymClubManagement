@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 from pathlib import Path
 
@@ -135,3 +136,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+=======
+from gym.menus.start_menu import start_menu
+
+if __name__ == "__main__":
+    start_menu()
+>>>>>>> fe50b8f (Connect main menu and update storage)

@@ -1,15 +1,8 @@
-
-from gym.services.users import (
-    add_user,
-    update_user,
-    activate_user,
-    deactivate_user,
-    get_user_by_username,
-    get_all_users,
-)
+from gym.services.users import UserService
 
 def print_user(user):
     print("\n--------------------")
+    print(f"ID: {user.id}")
     print(f"Name: {user.name}")
     print(f"Username: {user.username}")
     print(f"Role: {user.role}")
@@ -17,7 +10,7 @@ def print_user(user):
     print(f"Active: {user.is_active}")
 
 
-def user_management_menu(users):
+def user_management_menu(user_service):
     while True:
         print("\n===== User Management =====")
         print("1. Add User")
@@ -32,7 +25,7 @@ def user_management_menu(users):
 
         try:
             if choice == "1":
-                role = input("Role (member/coach): ").strip()
+                role = input("Role (member/coach): ").strip().lower()
                 name = input("Name: ").strip()
                 username = input("Username: ").strip()
                 password = input("Password: ").strip()
@@ -43,25 +36,23 @@ def user_management_menu(users):
                     print("Please enter y or n.")
                     continue
 
-                user = add_user(
+                user = user_service.add(
                     name=name,
                     username=username,
                     password=password,
                     email=email,
                     role=role,
-                    existing_users=users,
-                    is_active=(status == "y"),
                 )
 
-                user.id = max(
-                    (item.id or 0 for item in users), default=0
-                ) + 1
-                users.append(user)
+                if status == "n":
+                    user_service.set_active(user, False)
+
                 print("User added successfully.")
+                print_user(user)
 
             elif choice == "2":
                 username = input("Username: ").strip()
-                user = get_user_by_username(username, users)
+                user = user_service.find_by_username(username)
 
                 if user is None:
                     print("User not found.")
@@ -70,7 +61,7 @@ def user_management_menu(users):
 
             elif choice == "3":
                 username = input("Username to update: ").strip()
-                user = get_user_by_username(username, users)
+                user = user_service.find_by_username(username)
 
                 if user is None:
                     print("User not found.")
@@ -82,40 +73,47 @@ def user_management_menu(users):
                 password = input("New password: ")
                 email = input(f"Email [{user.email}]: ")
 
-                update_user(
-                    user,
-                    name=name if name.strip() else None,
-                    username=(
+                changes = {
+                    "name": name if name.strip() else None,
+                    "username": (
                         new_username if new_username.strip() else None
                     ),
-                    password=password if password.strip() else None,
-                    email=email if email.strip() else None,
-                    existing_users=users,
-                )
+                    "password": password if password.strip() else None,
+                    "email": email if email.strip() else None,
+                }
+
+                changes = {
+                    key: value
+                    for key, value in changes.items()
+                    if value is not None
+                }
+
+                user_service.update(user, **changes)
                 print("User updated successfully.")
+                print_user(user)
 
             elif choice == "4":
                 username = input("Username to activate: ").strip()
-                user = get_user_by_username(username, users)
+                user = user_service.find_by_username(username)
 
                 if user is None:
                     print("User not found.")
                 else:
-                    activate_user(user)
+                    user_service.set_active(user, True)
                     print("User activated successfully.")
 
             elif choice == "5":
                 username = input("Username to deactivate: ").strip()
-                user = get_user_by_username(username, users)
+                user = user_service.find_by_username(username)
 
                 if user is None:
                     print("User not found.")
                 else:
-                    deactivate_user(user)
+                    user_service.set_active(user, False)
                     print("User deactivated successfully.")
 
             elif choice == "6":
-                all_users = get_all_users(users)
+                all_users = user_service.list_all()
 
                 if not all_users:
                     print("No users found.")
@@ -131,34 +129,33 @@ def user_management_menu(users):
 
         except ValueError as error:
             print(f"Error: {error}")
-
+        except OSError as error:
+            print(f"Could not save changes: {error}")
 
 def manager_menu():
-    users = []
+    user_service = UserService()
 
     while True:
         print("\n===== Manager Menu =====")
         print("1. User Management")
         print("2. Hall Management")
         print("3. Class Management")
-        print("4. Subscription and Payment Management")
-        print("5. View Reports")
-        print("6. Logout")
+        print("4. Logout")
 
         choice = input("Choose an option: ").strip()
 
         if choice == "1":
-            user_management_menu(users)
+            user_management_menu(user_service)
+
         elif choice == "2":
-            print("Hall Management selected")
-        elif choice == "3":
-            print("Class Management selected")
+            print("Hall Management selected.")
+
+        elif choice == "3":  
+            print("Class Management selected.")
+
         elif choice == "4":
-            print("Subscription and Payment Management selected")
-        elif choice == "5":
-            print("View Reports selected")
-        elif choice == "6":
             print("Logging out...")
-            break
+            return
+
         else:
             print("Invalid choice. Please try again.")

@@ -1,13 +1,14 @@
 from gym.models import Workout,Exercise
 from gym.storage import load_data
-from gym.exceptions import NotFoundError,PermissionError,ValidationError
+from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
+from gym.storage import Storage
 
 WORKOUTS_FILE = "gym_data/workouts.txt"
 
 def workout_to_line(workout):
     #Workout --> String
-    exercise_str= ";" .json(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
+    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
         for ex in workout.exercises
     )
     return(

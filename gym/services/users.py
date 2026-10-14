@@ -1,10 +1,6 @@
 import re
 import json
-<<<<<<< HEAD
 from gym.models import Coach, Member, Manager
-=======
-from gym.models import Coach, Member
->>>>>>> 17e65fd (fix: update user service)
 from gym.storage import Storage
 ALLOWED_ROLES = {"member", "coach"}
 def is_valid_email(email):
@@ -306,11 +302,16 @@ class UserService:
             )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             user.__dict__.clear()
             user.__dict__.update(restored.__dict__)
 =======
             self.users[self.users.index(user)] = restored
 >>>>>>> 17e65fd (fix: update user service)
+=======
+            user.__dict__.clear()
+            user.__dict__.update(restored.__dict__)
+>>>>>>> 2bf516c (fix: preserve user object on update rollback)
             raise
 
         return user

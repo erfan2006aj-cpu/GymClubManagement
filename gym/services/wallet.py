@@ -139,6 +139,8 @@ class WalletService:
         return member
 
     def _record(self, member_id, tx_type, amount, description, tracking_number):
+        if tx_type not in Transaction.VALID_TYPES:
+            raise ValidationError(f"نوع تراکنش نامعتبر: {tx_type}")
         trans = Transaction(
             id=self._next_id(),
             member_id=member_id,

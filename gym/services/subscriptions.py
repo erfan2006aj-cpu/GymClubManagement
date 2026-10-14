@@ -93,7 +93,8 @@ class SubscriptionService:
     def total_income(self):
         total = 0
         for sub in self._subscriptions:
-            total += sub.amount
+            if sub.is_active:
+                total += sub.amount
         return total
 
 

@@ -273,11 +273,24 @@ class Registration:
         self.is_active = True
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        return {
+            "id": self.id,
+            "class_id": self.class_id,
+            "member_id": self.member_id,
+            "tracking_number": self.tracking_number,
+            "is_active": self.is_active,
+            "registration_date": self.registration_date.isoformat()
+            }
 
     @classmethod
-    def from_dict(cls, dictionary_data : dict) -> "Registration":
-        return cls(**dictionary_data)
+    def from_dict(cls, dictionary_data: dict) -> "Registration":
+        return cls(
+            id=dictionary_data["id"],
+            class_id=dictionary_data["class_id"],
+            member_id=dictionary_data["member_id"],
+            tracking_number=dictionary_data["tracking_number"],
+            is_active=dictionary_data["is_active"],
+            registration_date=datetime.fromisoformat(dictionary_data["registration_date"]))
 
 
 @dataclass

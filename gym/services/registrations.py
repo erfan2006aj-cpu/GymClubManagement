@@ -5,7 +5,7 @@ class Registration_service:
     def __init__(self,registrations: list[Registration],class_service):
         self.registrations = registrations
         self.class_service = class_service
-        self.next_id = max([r.id for r in registrations], default=0) + 1
+        self.next_id = max((r.id for r in registrations), default=0) + 1
 
     def generate_tracking_number(self) -> int:
         while True:

@@ -1,5 +1,4 @@
 from gym.models import Workout,Exercise
-from gym.storage import load_data
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage
@@ -9,7 +8,7 @@ WORKOUTS_FILE = "data/gym_data.txt"
 
 def workout_to_line(workout):
     #Workout --> String
-    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
+    exercise_str= ";" .join(f"{ex.name},{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
         for ex in workout.exercises
     )
     return(
@@ -57,7 +56,7 @@ def line_to_workout(line):
 def load_workouts():
     storage=Storage(WORKOUTS_FILE)
     workouts = []
-    for line in storage.read_line():
+    for line in storage.read_lines():
         if not line.strip():
             continue
         w=line_to_workout(line)
@@ -136,7 +135,7 @@ class WorkoutService:
 def next_id(workouts):
     if not workouts:
          return 1
-    return max(w["id"] for w in workouts)+1
+    return max(w.id for w in workouts)+1
 
 class WorkoutService:
     def __init__(self, class_service, registration_service, workouts = None):
@@ -145,7 +144,7 @@ class WorkoutService:
         self.workouts = workouts if workouts is not None else self.load_all()
         self.next_id = max([w.id for w in self.workouts], default=0) + 1
 
-    def load_all(self):
+    def _load_all(self):
         storage = Storage(WORKOUTS_FILE)
         workouts = []
         for line in storage.read_lines():
@@ -156,7 +155,7 @@ class WorkoutService:
                 workouts.append(w)
         return workouts
     
-    def save_all(self):
+    def _save_all(self):
         storage = Storage(WORKOUTS_FILE)
         lines = [workout_to_line(w) for w in self.workouts]
         storage.write_lines(lines)
@@ -277,7 +276,7 @@ class WorkoutService:
             raise NotFoundError("Workout not found.")
         return workout
     
-    def get_workout_by_coach(self,coach_id):
+    def get_workouts_by_coach(self,coach_id):
         return [w for w in self.workouts if str(w.coach_id) == str(coach_id)]
     
     def get_workouts_by_member(self,member_id):

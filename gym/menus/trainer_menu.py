@@ -248,10 +248,5 @@ def trainer_menu(coach_id, workout_service, class_service, registration_service)
             print("Logging out...")
             return
         else:
-<<<<<<< HEAD
             print("Invalid Choice. Please try again.")
             
-=======
-            print("انتخاب نامعتبر است ولی لطفا دوباره تلاش کنید.")
-            
->>>>>>> 3d3a110 (fix(workout, trainer_menu): fix typos and bugs)

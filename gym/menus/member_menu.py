@@ -7,13 +7,13 @@ class MemberMenu:
 
     def show(self):
         while True:
-            print("\n Member Menu")
+            print("\n ====Member Menu====")
             print("1. Show availble classes")
             print("2. Register in class")
             print("3. Cancel registeration")
             print("4. My registerations")
             print("0. Exit")
-            choice = input("Enter a number : ")
+            choice = input("Choose an option: ")
 
             if choice == "1":
                 self.list_available_classes()
@@ -27,7 +27,15 @@ class MemberMenu:
                 break
 
     def list_available_classes(self):
-        pass
+        classes = self.class_service.get_all_classes()
+        for c in classes:
+            if not c.is_active:
+                continue
+            registered = len(self.registration_service.get_class_members(c.id))
+            if registered >= c.capacity:
+                continue
+            remaining = c.capacity - registered
+            print(f"ID= {c.id} | {c.name} |capacity: {remaining}")
 
     def register_to_class(self):
         pass

@@ -81,6 +81,8 @@ class SubscriptionService:
         for sub in found:
             if sub.is_active and not sub.is_expired():
                 return Subscription.STATUS_ACTIVE
+        if all(not s.is_active for s in found):
+            return Subscription.STATUS_NONE
         return Subscription.STATUS_EXPIRED
 
 
@@ -93,7 +95,8 @@ class SubscriptionService:
     def total_income(self):
         total = 0
         for sub in self._subscriptions:
-            total += sub.amount
+            if sub.is_active:
+                total += sub.amount
         return total
 
 

@@ -16,7 +16,10 @@ The system is designed for three main user roles:
 
 Main Features
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4abf0b9 (Connect main to manager menu)
 - User Management: Add, edit, activate, deactivate, and view trainer and member accounts.
 - Hall Management: Manage gym halls, including their capacity and equipment.
 - Group Class Management: Manage classes, trainers, halls, schedules, and capacities.
@@ -53,6 +56,7 @@ Project Structure
 - "docs/" — Project documentation and flowcharts.
 - "requirements.txt" — Project dependencies.
 
+<<<<<<< HEAD
 Requirements
 .Python 3.10 or higher
 
@@ -70,6 +74,16 @@ Default Admin Login
 use the following credentials to log in as an administrator:
 .Username: admin
 .Password: admin@123
+=======
+How to Run
+
+1. Clone or download the repository.
+2. Open the project in PyCharm or another Python IDE.
+3. Make sure Python is installed.
+4. Install the dependencies listed in "requirements.txt", if needed.
+5. Run "main.py".
+6. Follow the instructions displayed in the terminal.
+>>>>>>> 4abf0b9 (Connect main to manager menu)
 
 Development Status
 

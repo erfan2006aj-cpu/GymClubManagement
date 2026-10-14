@@ -285,7 +285,8 @@ class UserService:
                 else Coach.from_dict(old_data)
             )
 
-            self.users[self.users.index(user)] = restored
+            user.__dict__.clear()
+            user.__dict__.update(restored.__dict__)
             raise
 
         return user

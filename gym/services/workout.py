@@ -18,14 +18,15 @@ def workout_to_line(workout):
     )
 =======
 from gym.storage import load_data
-from gym.exceptions import NotFoundError,PermissionError,ValidationError
+from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
+from gym.storage import Storage
 
 WORKOUTS_FILE = "gym_data/workouts.txt"
 
 def workout_to_line(workout):
     #Workout --> String
-    exercise_str= ";" .json(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
+    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
         for ex in workout.exercises
     )
     return(
@@ -34,18 +35,18 @@ def workout_to_line(workout):
     )
 
 def line_to_workout(line):
-     "برعکس"
-     parts = line.split("|")
-     if len(parts) < 5:
-          return None
+    "برعکس"
+    parts = line.split("|")
+    if len(parts) < 5:
+        return None
      
-     Workout_id = int(parts[0])
-     member_id = int(parts[1])
-     class_id = int(parts[2])
-     coach_id =int(parts[3])
-     exercises_str= parts[4]
+    Workout_id = int(parts[0])
+    member_id = int(parts[1])
+    class_id = int(parts[2])
+    coach_id =int(parts[3])
+    exercises_str= parts[4]
 
-     exercises = []
+    exercises = []
 
     if exercises_str.strip():
         for ex_str in exercises_str.split(";"):

@@ -1,12 +1,9 @@
 
 import re
-
+import json
 from gym.models import Coach, Member
-
-
+from gym.storage import Storage
 ALLOWED_ROLES = {"member", "coach"}
-
-
 def is_valid_email(email):
     if not isinstance(email, str):
         return False
@@ -86,16 +83,12 @@ def add_user(
 
     return user
 
-
 def activate_user(user):
     user.activate()
     return user
-
-
 def deactivate_user(user):
     user.deactivate()
     return user
-
 
 def update_user(
     user,
@@ -123,7 +116,6 @@ def update_user(
                         raise ValueError("Username already exists.")
 
         user.username = username
-
     if email is not None:
         if not is_valid_email(email):
             raise ValueError("Invalid email address.")
@@ -134,7 +126,6 @@ def update_user(
         user.password = password.strip()
 
     return user
-
 
 def get_user_by_username(username, existing_users):
     if not isinstance(username, str) or not username.strip():
@@ -151,3 +142,163 @@ def get_user_by_username(username, existing_users):
 
 def get_all_users(existing_users):
     return list(existing_users)
+
+import json
+
+DATA_PATH = "data/gym_data.txt"
+USERS_SECTION = "USERS"
+
+
+class UserService:
+    def __init__(self):
+        self.storage = Storage(DATA_PATH)
+        self.users = []
+        self._load()
+
+    def _load(self):
+        """Load users from the text file."""
+        self.users = []
+
+        if not self.storage.exists():
+            return
+
+        inside_section = False
+
+        for line in self.storage.read_lines():
+            text = line.strip()
+
+            if text.startswith("[") and text.endswith("]"):
+                inside_section = text == f"[{USERS_SECTION}]"
+                continue
+
+            if not inside_section or not text:
+                continue
+
+            try:
+                data = json.loads(text)
+                role = data.get("role")
+
+                if role == "member":
+                    user = Member.from_dict(data)
+                elif role == "coach":
+                    user = Coach.from_dict(data)
+                else:
+                    continue
+
+                self.users.append(user)
+
+            except (ValueError, TypeError, KeyError):
+                print("Warning: Invalid user record skipped.")
+
+    def _save(self):
+        """Save users without deleting other text-file sections."""
+        lines = self.storage.read_lines()
+        marker = f"[{USERS_SECTION}]"
+
+        start = None
+        end = None
+
+        for i, line in enumerate(lines):
+            if line.strip() == marker:
+                start = i
+                end = i + 1
+
+                while (
+                    end < len(lines)
+                    and not lines[end].strip().startswith("[")
+                ):
+                    end += 1
+
+                break
+
+        user_lines = [
+            json.dumps(user.to_dict(), ensure_ascii=False)
+            for user in self.users
+        ]
+
+        if start is None:
+            if lines and lines[-1].strip():
+                lines.append("")
+
+            lines.append(marker)
+            lines.extend(user_lines)
+        else:
+            lines[start + 1:end] = user_lines
+
+        self.storage.write_lines(lines)
+
+    def list_all(self):
+        return list(self.users)
+
+    def find_by_id(self, user_id):
+        for user in self.users:
+            if str(user.id) == str(user_id):
+                return user
+        return None
+
+    def find_by_username(self, username):
+        return get_user_by_username(username, self.users)
+
+    def add(self, name, username, password, email, role):
+        user = add_user(
+            name=name,
+            username=username,
+            password=password,
+            email=email,
+            role=role,
+            existing_users=self.users,
+        )
+
+        user.id = max(
+            (
+                int(item.id)
+                for item in self.users
+                if item.id is not None
+            ),
+            default=0,
+        ) + 1
+
+        self.users.append(user)
+
+        try:
+            self._save()
+        except OSError:
+            self.users.remove(user)
+            raise
+
+        return user
+
+    def update(self, user, **changes):
+        old_data = user.to_dict()
+
+        update_user(
+            user,
+            existing_users=self.users,
+            **changes,
+        )
+
+        try:
+            self._save()
+        except OSError:
+            restored = (
+                Member.from_dict(old_data)
+                if user.role == "member"
+                else Coach.from_dict(old_data)
+            )
+
+            self.users[self.users.index(user)] = restored
+            raise
+
+        return user
+
+    def set_active(self, user, is_active):
+        old_status = user.is_active
+        user.is_active = is_active
+
+        try:
+            self._save()
+        except OSError:
+            user.is_active = old_status
+            raise
+
+        return user

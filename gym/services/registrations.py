@@ -81,7 +81,19 @@ class Registration_service:
         return registrations
 
     def _save_registration(self, r: Registration):
-        pass
+        line = (
+            f"REGISTRATION,{r.id},{r.class_id},{r.member_id},"
+            f"{r.tracking_number},{r.is_active},"
+            f"{r.registration_date.isoformat()}"
+        )
+        self.storage.append_line(line)
 
     def _rewrite_all(self):
-        pass
+        lines = []
+        for r in self.registrations:
+            lines.append(
+                f"REGISTRATION,{r.id},{r.class_id},{r.member_id},"
+                f"{r.tracking_number},{r.is_active},"
+                f"{r.registration_date.isoformat()}"
+            )
+        self.storage.write_lines(lines)

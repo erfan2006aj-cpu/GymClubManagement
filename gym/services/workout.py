@@ -1,5 +1,4 @@
 from gym.models import Workout,Exercise
-from gym.storage import load_data
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage

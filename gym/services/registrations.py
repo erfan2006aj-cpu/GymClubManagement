@@ -8,7 +8,7 @@ class Registration_service:
         self.storage = Storage(DATA_PATH)
         self.registrations = self._load_registrations()
         self.class_service = class_service
-        self.next_id = max((r.id for r in registrations), default=0) + 1
+        self.next_id = max((r.id for r in self.registrations), default=0) + 1
 
     def generate_tracking_number(self) -> int:
         used = {r.tracking_number for r in self.registrations}

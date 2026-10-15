@@ -47,7 +47,7 @@ def handle_coach_login(user_service: UserService) -> None:
 
         
         class_service = ClassService()
-        registration_service = Registration_service([], class_service)
+        registration_service = Registration_service(class_service)
         workout_service = WorkoutService(class_service, registration_service)
 
         
@@ -74,7 +74,7 @@ def handle_member_login(user_service: UserService) -> None:
 
         # Build services
         class_service = ClassService()
-        registration_service = Registration_service([], class_service)
+        registration_service = Registration_service(class_service)
         subscription_service = SubscriptionService()
         wallet_service = WalletService(user_service, subscription_service)
 

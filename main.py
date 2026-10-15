@@ -1,0 +1,92 @@
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+
+from gym.services.users import UserService
+from gym.services.auth import login_flow
+from gym.exceptions import GymError
+
+
+def print_header(title: str) -> None:
+    print("\n" + "=" * 45)
+    print(title.center(45))
+    print("=" * 45)
+
+
+def show_main_menu() -> None:
+    print_header("Gym Club Management System")
+    print("1. Manager Login")
+    print("2. Coach Login")
+    print("3. Member Login")
+    print("4. Exit")
+    print("-" * 45)
+
+
+def handle_manager_login(user_service: UserService) -> None:
+    user = login_flow("manager", user_service)
+    if user is None:
+        return
+    
+    try:
+        from gym.menus.manager_menu import manager_menu
+        manager_menu()   # ← بدون پارامتر
+    except Exception as e:
+        print(f"\n[ERROR] Manager panel error: {e}")
+
+
+def handle_coach_login(user_service: UserService) -> None:
+    user = login_flow("coach", user_service)
+    if user is None:
+        return
+    print("\n[INFO] Coach panel is under development.")
+
+
+def handle_member_login(user_service: UserService) -> None:
+    user = login_flow("member", user_service)
+    if user is None:
+        return
+    print("\n[INFO] Member panel is under development.")
+
+
+def main() -> None:
+    print("\nLoading data...")
+    try:
+        user_service = UserService()
+        print(f"[OK] {len(user_service.users)} user(s) loaded.")
+    except Exception as e:
+        print(f"[ERROR] Failed to load data: {e}")
+        return
+    
+    while True:
+        try:
+            show_main_menu()
+            choice = input("Choose an option: ").strip()
+            
+            if choice == "1":
+                handle_manager_login(user_service)
+            
+            elif choice == "2":
+                handle_coach_login(user_service)
+            
+            elif choice == "3":
+                handle_member_login(user_service)
+            
+            elif choice == "4":
+                print("\nGoodbye!")
+                break
+            
+            else:
+                print("\n[ERROR] Invalid choice. Please try again.")
+        
+        except KeyboardInterrupt:
+            print("\n\n[INFO] Program interrupted by user.")
+            break
+        except GymError as e:
+            print(f"\n[ERROR] {e}")
+        except Exception as e:
+            print(f"\n[ERROR] Unexpected error: {e}")
+
+
+if __name__ == "__main__":
+    main()

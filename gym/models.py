@@ -184,6 +184,8 @@ class Subscription:
         return self.end_date < datetime.now()
 
     def status(self):
+        if not self.is_active:
+            return self.STATUS_NONE
         if self.is_expired():
             return self.STATUS_EXPIRED
         else:

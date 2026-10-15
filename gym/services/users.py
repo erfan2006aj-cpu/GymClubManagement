@@ -170,11 +170,6 @@ class UserService:
         self.users.append(admin)
         self._save()
 
-        print("=" * 45)
-        print(" Defult admin created:")
-        print("   Username: admin")
-        print("   Password: admin@123")
-        print("=" * 45)
     def _load(self):
         """Load users from the text file."""
         self.users = []

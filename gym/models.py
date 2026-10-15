@@ -265,9 +265,9 @@ class Registration:
     class_id: int
     member_id: int
     tracking_number: str
-    is_active: bool
-    registration_date: datetime
-
+    is_active: bool = True
+    registration_date: datetime = field(default_factory=datetime.now)
+    
     def cancel(self) -> None:
         self.is_active = False
         

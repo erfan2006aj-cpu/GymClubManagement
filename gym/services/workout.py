@@ -1,5 +1,4 @@
 from gym.models import Workout,Exercise
-from gym.storage import load_data
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage
@@ -54,16 +53,7 @@ def line_to_workout(line):
             exercises=exercises,
         )
 
-def load_workouts():
-    storage=Storage(WORKOUTS_FILE)
-    workouts = []
-    for line in storage.read_line():
-        if not line.strip():
-            continue
-        w=line_to_workout(line)
-        if w:
-            workouts.append(w)
-    return workouts
+
 
 class WorkoutService:
     def __init__(self, class_service, registration_service, workouts = None):
@@ -142,25 +132,64 @@ class WorkoutService:
     def __init__(self, class_service, registration_service, workouts = None):
         self.class_service = class_service
         self.registration_service = registration_service
-        self.workouts = workouts if workouts is not None else self.load_all()
-        self.next_id = max([w.id for w in self.workouts], default=0) + 1
+        self.workouts = workouts if workouts else self.load_all()
+        self.next_id = max([w.id for w in self.workouts if w.id], default=0) + 1
 
     def load_all(self):
         storage = Storage(WORKOUTS_FILE)
         workouts = []
+        marker = "[WORKOUTS]"
+        inside_section = False
+    
         for line in storage.read_lines():
-            if not line.strip():
+            text = line.strip()
+        
+            if text.startswith("[") and text.endswith("]"):
+                inside_section = (text == marker)
                 continue
-            w = line_to_workout(line)
-            if w:
-                workouts.append(w)
+        
+            if not inside_section or not text:
+                continue
+        
+            try:
+                w = line_to_workout(text)
+                if w:
+                    workouts.append(w)
+            except Exception:
+                continue
+    
         return workouts
     
     def save_all(self):
+    
         storage = Storage(WORKOUTS_FILE)
-        lines = [workout_to_line(w) for w in self.workouts]
+        lines = storage.read_lines()
+        marker = "[WORKOUTS]"
+    
+        start = None
+        end = None
+    
+        for i, line in enumerate(lines):
+            if line.strip() == marker:
+                start = i
+                end = i + 1
+                while end < len(lines) and not lines[end].strip().startswith("["):
+                    end += 1
+                break
+    
+        workout_lines = [workout_to_line(w) for w in self.workouts]
+    
+        if start is None:
+        
+            if lines and lines[-1].strip():
+                lines.append("")
+            lines.append(marker)
+            lines.extend(workout_lines)
+        else:
+        
+            lines[start + 1:end] = workout_lines
+    
         storage.write_lines(lines)
-
     def find_by_id(self, workout_id):
         for w in self.workouts:
             if str(w.id) == str(workout_id):

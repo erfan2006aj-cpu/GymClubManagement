@@ -269,43 +269,6 @@ class WorkoutService:
                 return w
         return None
 
-<<<<<<< HEAD
-=======
-def _next_id(workouts):
-    if not workouts:
-         return 1
-    return max(w["id"] for w in workouts)+1
-
-class WorkoutService:
-    def __init__(self, class_sevice, registration_sevice, workouts = None):
-        self.class_service = class_service
-        self.registration_service = registration_service
-        self.workouts = workouts if workouts is not None else self._load_all()
-        self.next_id = max([w.id for w in self.workouts], default=0) + 1
-
-    def load_all(self):
-        storage = Storage(WORKOUTS_FILE)
-        workouts = []
-        for line in storage.read_line():
-            if not line.strip():
-                continue
-            w = _line_to_workout(line)
-            if w:
-                workouts.append(w)
-        return workouts
-    
-    def save_all(self):
-        storage = Storage(WORKOUTS_FILE)
-        lines = [workout_to_line(w) for w in self.workouts]
-        storage.write_line(lines)
-
-    def find_by_id(self, workout_id):
-        for w in self.workouts:
-            if str(w.id) == str(workout_id):
-                return w
-        return None
-
->>>>>>> e3ec782 (feat(workout): complete littely)
     def get_member_workout(self, member_id, class_id):
         for w in self.workouts:
             if (str(w.member_id) == str(member_id)

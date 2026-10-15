@@ -32,6 +32,9 @@ class Registration_service:
         if gym_class is None:
             raise ValueError(f"Class with {class_id} class id does not exist")
 
+        if not gym_class.is_active:                      
+            raise ValueError("This class is not active")
+
         if self.is_registered(member.id, class_id):
             raise ValueError("You are already registered")
 

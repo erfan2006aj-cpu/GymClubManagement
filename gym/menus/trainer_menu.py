@@ -20,7 +20,7 @@ def view_my_classes(coach_id , class_service):
     for i,c in enumerate(my_classes,1):
         print(f"\n [ {i}] {c.name}")
         print(f"    ID : {c.id}")
-        print(f"    Schedule : {c.Schedule}")
+        print(f"    Schedule : {c.schedule}")
         print(f"    Capacity : {c.capacity}")
         print(f"    Active   : {c.is_active}")
 
@@ -65,7 +65,7 @@ def select_member(class_id,registration_service):
     for i,r in enumerate(registrations,1):
         print(f" {i}.Member ID : {r.member_id} (Tracking: {r.tracking_number})")
 
-        choice = input("Choose a member number (0 to cancel): ").strip()
+    choice = input("Choose a member number (0 to cancel): ").strip()
     if choice == "0":
         return None
     
@@ -136,7 +136,7 @@ def create_workout_flow(coach_id, workout_service, class_service, registration_s
         print(f"Error: {e}")
 
 def view_workouts_flow(coach_id, workout_service):
-    workouts = workout_service.get_workouts_by_coach(coach_id)
+    workouts = workout_service.get_workout_by_coach(coach_id)
 
     if not workouts:
         print("No workout found.")

@@ -86,7 +86,7 @@ class WalletService:
                 trans = self._from_line(stripped)
                 self._transactions.append(trans)
             except Exception:
-                print(f"خط  {number} نامعتبره")
+                print(f"Invalid line {number}")
 
     def _save(self, trans):
         line = self._to_line(trans)
@@ -128,19 +128,19 @@ class WalletService:
         member = self.user_service.find_by_id(member_id)
 
         if member is None:
-            raise NotFoundError("عضو پیدا نشد")
+            raise NotFoundError("Member not found")
 
         if not isinstance(member, Member):
-            raise ValidationError("کاربر عضو نیست")
+            raise ValidationError("User is not a member")
 
         if not member.is_active:
-            raise AccountDisabledError("حساب غیرفعال است.")
+            raise AccountDisabledError("Account is disabled")
 
         return member
 
     def _record(self, member_id, tx_type, amount, description, tracking_number):
         if tx_type not in Transaction.VALID_TYPES:
-            raise ValidationError(f"نوع تراکنش نامعتبر: {tx_type}")
+            raise ValidationError(f"Invalid transaction type: {tx_type}")
         trans = Transaction(
             id=self._next_id(),
             member_id=member_id,
@@ -182,10 +182,10 @@ class WalletService:
             exp_month = int(exp_month)
             exp_year = int(exp_year)
         except (TypeError, ValueError):
-            raise ValidationError("ورودی‌ کارت نامعتبر")
+            raise ValidationError("Invalid card input")
 
         if amount <= 0:
-            raise ValidationError("مبلغ باید بیشتر از صفر باشد")
+            raise ValidationError("Amount must be greater than zero")
 
         member = self._get_member(member_id)
 
@@ -193,13 +193,13 @@ class WalletService:
         try:
             payment_id = api.pay(card, exp_month, exp_year, password, cvv2, amount)
         except ValueError as error:
-            raise ValidationError(f"پرداخت ناموفق: {error}")
+            raise ValidationError(f"Payment failed: {error}")
 
         trans = self._record(
             member_id=member_id,
             tx_type=Transaction.TYPE_CHARGE,
             amount=amount,
-            description="شارژ کیف پول",
+            description="Wallet charge",
             tracking_number=str(payment_id),
         )
 
@@ -214,16 +214,16 @@ class WalletService:
             member = self._get_member(member_id)
 
             if self.subscription_service is None:
-                raise ValidationError("اشتراک دردسترس نیست!")
+                raise ValidationError("Subscription service is not available")
 
             try:
                 price = self.subscription_service.get_plan_price(plan_type)
                 label = self.subscription_service.get_plan_label(plan_type)
             except (KeyError, ValueError):
-                raise ValidationError("اشتراک نامعتبر")
+                raise ValidationError("Invalid subscription plan")
 
             if member.wallet_balance < price:
-                raise InsufficientBalanceError("موجودی کافی نیست")
+                raise InsufficientBalanceError("Insufficient balance")
 
             member.wallet_balance -= price
 
@@ -243,7 +243,7 @@ class WalletService:
                 member_id=member_id,
                 tx_type=Transaction.TYPE_PAYMENT,
                 amount=price,
-                description=f"خرید {label}",
+                description=f"Purchase {label}",
                 tracking_number=str(sub.tracking_number),
             )
 

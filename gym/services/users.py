@@ -1,10 +1,6 @@
 import re
 import json
-<<<<<<< HEAD
 from gym.models import Coach, Member, Manager
-=======
-from gym.models import Coach, Member
->>>>>>> feature/halls-classes
 from gym.storage import Storage
 ALLOWED_ROLES = {"member", "coach"}
 def is_valid_email(email):
@@ -196,12 +192,10 @@ class UserService:
             try:
                 data = json.loads(text)
                 role = data.get("role")
-<<<<<<< HEAD
+
                 if role == "manager":
                     user = Manager.from_dict(data)
-=======
 
->>>>>>> feature/halls-classes
                 if role == "member":
                     user = Member.from_dict(data)
                 elif role == "coach":

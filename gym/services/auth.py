@@ -8,7 +8,6 @@ from gym.services.users import UserService
 
 def login(username: str, password: str, role: str, user_service: UserService):
     
-    
     # 1. Validate inputs
     if not username or not str(username).strip():
         raise ValidationError("Username cannot be empty.")
@@ -43,6 +42,7 @@ def login(username: str, password: str, role: str, user_service: UserService):
 
 
 def login_flow(role: str, user_service: UserService):
+    
     
     role_names = {
         "manager": "Manager",

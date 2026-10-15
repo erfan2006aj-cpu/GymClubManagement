@@ -10,12 +10,12 @@ class Registration_service:
         self.class_service = class_service
         self.next_id = max((r.id for r in self.registrations), default=0) + 1
 
-    def generate_tracking_number(self) -> int:
+    def generate_tracking_number(self) -> str:
         used = {r.tracking_number for r in self.registrations}
         while True:
             number = random.randint(100000, 999999)
             if number not in used:
-                return number
+                return str(number)
 
     def find_active(self, member_id: int, class_id: int):
         for r in self.registrations:
@@ -53,6 +53,7 @@ class Registration_service:
             is_active=True
         )
         self.registrations.append(registration)
+        self._save_registration(registration)
         self.next_id += 1
         return registration
 

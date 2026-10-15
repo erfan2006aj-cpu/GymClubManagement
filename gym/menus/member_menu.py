@@ -1,4 +1,4 @@
-from gym.services.registration_service import Registration_service
+from gym.services.registrations import Registration_service
 class MemberMenu:
     def __init__(self, member, registration_service: Registration_service,class_service, subscription_service):
         self.member = member

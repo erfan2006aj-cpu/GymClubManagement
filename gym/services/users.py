@@ -1,4 +1,3 @@
-
 import re
 import json
 from gym.models import Coach, Member
@@ -155,6 +154,27 @@ class UserService:
         self.users = []
         self._load()
 
+        if not self.users:
+            self._create_defult_admin()
+
+    def _create_defult_admin(self):
+        from gym.models import Manager
+        admin = Manager(
+            id = 1,
+            name = "Admin",
+            username = "admin",
+            password = "admin@123",
+            email = "admin@gym.com",
+            is_active = True,
+        )
+        self.users.append(admin)
+        self._save()
+
+        print("=" * 45)
+        print(" Defult admin created:")
+        print("   Username: admin")
+        print("   Password: admin@123")
+        print("=" * 45)
     def _load(self):
         """Load users from the text file."""
         self.users = []

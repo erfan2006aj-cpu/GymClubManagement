@@ -1,5 +1,4 @@
 from gym.models import Workout,Exercise
-<<<<<<< HEAD
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage
@@ -16,78 +15,6 @@ def workout_to_line(workout):
          f"{workout.id}|{workout.member_id}|{workout.class_id}|"
          f"{workout.coach_id}|{exercise_str}"
     )
-=======
-from gym.storage import load_data
-from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
-from gym.validators import is_positive_integer
-from gym.storage import Storage
-
-WORKOUTS_FILE = "gym_data/workouts.txt"
-
-def workout_to_line(workout):
-    #Workout --> String
-    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
-        for ex in workout.exercises
-    )
-    return(
-         f"{workout.id}|{workout.member_id}|{workout.class_id}|"
-         f"{workout.coach_id}|{exercise_str}"
-    )
-
-def line_to_workout(line):
-    "برعکس"
-    parts = line.split("|")
-    if len(parts) < 5:
-        return None
-     
-    Workout_id = int(parts[0])
-    member_id = int(parts[1])
-    class_id = int(parts[2])
-    coach_id =int(parts[3])
-    exercises_str= parts[4]
-
-    exercises = []
-
-    if exercises_str.strip():
-        for ex_str in exercises_str.split(";"):
-            if not ex_str.strip():
-                continue
-            ex_parts = ex_str.split(",")
-            if len(ex_parts) <4:
-                continue
-            exercises.append(Exercise(
-                name = wx_parts[0],
-                sets=int(ex_parts[1])
-                reps=int(ex_parts[2])
-                rest_time=int(ex_parts[3]) if len(ex_parts) > 3 else 0,
-                description=ex_parts[4] if len(ex_parts) > 4 else "",
-            ))
-               
-        return Workout(
-            id= workout_id,
-            member_id=memebr_id,
-            class_id=class_id
-            coach_id=coach_id
-            exercises=exercises,
-        )
-
-def load_workouts():
-    storage=Storage(WORKOUTS_FILE)
-    workouts = []
-    for line in storage.read_line():
-        if not line.strip():
-            continue
-        w=line_to_workout(line)
-        if w:
-            workouts.append(w)
-    return workouts
-
-
-def save_workouts():
-    storage = Storage(WORKOUTS_FILE)
-    lines = [_workout_to_line(w) for w in workouts]
-    storage.write_lines(lines)
->>>>>>> e3ec782 (feat(workout): complete littely)
 
 def line_to_workout(line):
     "برعکس"
@@ -263,6 +190,40 @@ class WorkoutService:
             lines[start + 1:end] = workout_lines
     
         storage.write_lines(lines)
+    def find_by_id(self, workout_id):
+        for w in self.workouts:
+            if str(w.id) == str(workout_id):
+                return w
+        return None
+
+def next_id(workouts):
+    if not workouts:
+         return 1
+    return max(w["id"] for w in workouts)+1
+
+class WorkoutService:
+    def __init__(self, class_service, registration_service, workouts = None):
+        self.class_service = class_service
+        self.registration_service = registration_service
+        self.workouts = workouts if workouts is not None else self.load_all()
+        self.next_id = max([w.id for w in self.workouts], default=0) + 1
+
+    def load_all(self):
+        storage = Storage(WORKOUTS_FILE)
+        workouts = []
+        for line in storage.read_lines():
+            if not line.strip():
+                continue
+            w = line_to_workout(line)
+            if w:
+                workouts.append(w)
+        return workouts
+    
+    def save_all(self):
+        storage = Storage(WORKOUTS_FILE)
+        lines = [workout_to_line(w) for w in self.workouts]
+        storage.write_lines(lines)
+
     def find_by_id(self, workout_id):
         for w in self.workouts:
             if str(w.id) == str(workout_id):

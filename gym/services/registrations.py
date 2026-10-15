@@ -53,6 +53,7 @@ class Registration_service:
             is_active=True
         )
         self.registrations.append(registration)
+        self._save_registration(registration)
         self.next_id += 1
         return registration
 

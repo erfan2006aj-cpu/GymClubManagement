@@ -3,10 +3,11 @@ import random
 from gym.models import Registration
 from gym.storage import Storage
 class Registration_service:
-    def __init__(self,registrations: list[Registration],class_service):
-        self.registrations = registrations
+    def __init__(self,class_service,storage_path="data/gym_data.txt"):
+        self.storage = Storage(storage_path)
+        self.registrations = self._load_registrations()
         self.class_service = class_service
-        self.next_id = max((r.id for r in registrations), default=0) + 1
+        self.next_id = max((r.id for r in self.registrations), default=0) + 1
 
     def generate_tracking_number(self) -> str:
         used = {r.tracking_number for r in self.registrations}

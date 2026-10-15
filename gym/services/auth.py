@@ -8,6 +8,8 @@ from gym.services.users import UserService
 
 def login(username: str, password: str, role: str, user_service: UserService):
     
+    
+    # 1. Validate inputs
     if not username or not str(username).strip():
         raise ValidationError("Username cannot be empty.")
     
@@ -18,30 +20,29 @@ def login(username: str, password: str, role: str, user_service: UserService):
     password = str(password).strip()
     role = str(role).strip().lower()
     
-    
+    # 2. Find user
     user = user_service.find_by_username(username)
     
     if user is None:
         raise NotFoundError("Invalid username or password.")
     
-    
+    # 3. Check role
     if user.role != role:
         raise NotFoundError("Invalid username or password.")
     
-    
+    # 4. Check password
     if user.password != password:
         raise NotFoundError("Invalid username or password.")
     
-    
+    # 5. Check if account is active
     if not user.is_active:
         raise AccountDisabledError("Your account has been disabled.")
     
-   
+    # 6. Success
     return user
 
 
 def login_flow(role: str, user_service: UserService):
-    
     
     role_names = {
         "manager": "Manager",

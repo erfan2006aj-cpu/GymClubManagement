@@ -1,33 +1,28 @@
-import json
-import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+class Storage:
+    def __init__(self, file_path: str):
+        self.file_path = Path(file_path)
 
-def _get_file_path(name):
-    return os.path.join(DATA_DIR, f"{name}.json")
+    def exists(self) -> bool:
+        return self.file_path.is_file()
 
-def load_data(name):
-   path = _get_file_path(name)
+    def read_lines(self) -> list[str]:
+        if not self.exists():
+            return []
 
-    if not os.path.exists(path):
-        return []
-    with open(path, "r", encoding="utf-8") as file:
-        return json.load(file)
+        with self.file_path.open("r", encoding="utf-8") as file:
+            return [line.rstrip("\r\n") for line in file]
 
-def save_data(name, data):
-   if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
+    def append_line(self, line: str) -> None:
+        self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    path = _get_file_path(name)
+        with self.file_path.open("a", encoding="utf-8") as file:
+            file.write(line.rstrip("\r\n") + "\n")
 
-    with open(path, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
+    def write_lines(self, lines: list[str]) -> None:
+        self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-def load_users():
-    return load_data("users")
-
-
-def save_users(users):
-    save_data("users", users)
-
+        with self.file_path.open("w", encoding="utf-8") as file:
+            for line in lines:
+                file.write(line.rstrip("\r\n") + "\n")

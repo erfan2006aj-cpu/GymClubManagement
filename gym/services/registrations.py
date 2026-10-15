@@ -61,6 +61,7 @@ class Registration_service:
         if registration is None:
             raise ValueError("No active registration found")
         registration.cancel()
+        self._rewrite_all()
         return registration
 
     def get_member_registrations(self, member_id: int) -> list[Registration]:

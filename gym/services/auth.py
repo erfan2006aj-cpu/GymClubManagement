@@ -37,7 +37,11 @@ def login(username: str, password: str, role: str, user_service: UserService):
     if not user.is_active:
         raise AccountDisabledError("Your account has been disabled.")
     
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> dc8d58f (fix: resolve merge conflicts)
     return user
 
 

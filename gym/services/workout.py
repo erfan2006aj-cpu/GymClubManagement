@@ -147,7 +147,32 @@ class WorkoutService:
     
     def save_all(self):
         storage = Storage(WORKOUTS_FILE)
-        lines = [workout_to_line(w) for w in self.workouts]
+        lines = storage.read_lines()
+        marker = "[WORKOUTS]"
+
+        start = None
+        end = None
+
+        for i, line in enumerate(lines):
+            if line.strip() == marker:
+                start = i
+                end = i + 1
+                while end < len(lines) and not lines[end].strip().startswith("["):
+                    end += 1
+                break
+
+        workout_lines = [workout_to_line(w) for w in self.workouts]
+
+        if start is None:
+        
+            if lines and lines[-1].strip():
+                lines.append("")
+            lines.append(marker)
+            lines.extend(workout_lines)
+        
+        else:
+        
+            lines[start + 1:end] = workout_lines
         storage.write_lines(lines)
 
     def find_by_id(self, workout_id):

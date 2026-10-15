@@ -264,7 +264,7 @@ class Registration:
     id: int
     class_id: int
     member_id: int
-    tracking_number: str
+    tracking_number: int
     is_active: bool
     registration_date: datetime
 
@@ -287,11 +287,11 @@ class Registration:
     @classmethod
     def from_dict(cls, dictionary_data: dict) -> "Registration":
         return cls(
-            id=int(dictionary_data["id"]),
-            class_id=int(dictionary_data["class_id"]),
-            member_id=int(dictionary_data["member_id"]),
-            tracking_number=str(dictionary_data["tracking_number"]),
-            is_active=str(dictionary_data["is_active"]).lower() == "true",
+            id=dictionary_data["id"],
+            class_id=dictionary_data["class_id"],
+            member_id=dictionary_data["member_id"],
+            tracking_number=dictionary_data["tracking_number"],
+            is_active=dictionary_data["is_active"],
             registration_date=datetime.fromisoformat(dictionary_data["registration_date"]))
 
 

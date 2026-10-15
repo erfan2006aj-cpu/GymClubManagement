@@ -8,14 +8,14 @@ class Registration_service:
         self.storage = Storage(DATA_PATH)
         self.registrations = self._load_registrations()
         self.class_service = class_service
-        self.next_id = max((r.id for r in self.registrations), default=0) + 1
+        self.next_id = max((r.id for r in registrations), default=0) + 1
 
-    def generate_tracking_number(self) -> str:
+    def generate_tracking_number(self) -> int:
         used = {r.tracking_number for r in self.registrations}
         while True:
             number = random.randint(100000, 999999)
             if number not in used:
-                return str(number)
+                return number
 
     def find_active(self, member_id: int, class_id: int):
         for r in self.registrations:
@@ -31,6 +31,9 @@ class Registration_service:
         gym_class = self.class_service.find_by_id(class_id)
         if gym_class is None:
             raise ValueError(f"Class with {class_id} class id does not exist")
+
+        if not gym_class.is_active:                      
+            raise ValueError("This class is not active")
 
         if self.is_registered(member.id, class_id):
             raise ValueError("You are already registered")
@@ -58,6 +61,7 @@ class Registration_service:
         if registration is None:
             raise ValueError("No active registration found")
         registration.cancel()
+        self._rewrite_all()
         return registration
 
     def get_member_registrations(self, member_id: int) -> list[Registration]:

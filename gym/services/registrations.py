@@ -62,4 +62,12 @@ class Registration_service:
 
     def get_class_members(self, class_id: int) -> list[Registration]:
         return [r for r in self.registrations if r.class_id == class_id and r.is_active]
-    
+
+    def _load_registrations(self) -> list[Registration]:
+        pass
+
+    def _save_registration(self, r: Registration):
+        pass
+
+    def _rewrite_all(self):
+        pass

@@ -1,10 +1,12 @@
 from gym.services.registrations import Registration_service
 class MemberMenu:
-    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service):
+    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service,wallet_service=None,user_service=None):
         self.member = member
         self.registration_service = registration_service
         self.class_service = class_service
         self.subscription_service = subscription_service
+        self.wallet_service = wallet_service
+        self.user_service = user_service
 
     def show(self):
         while True:
@@ -13,6 +15,9 @@ class MemberMenu:
             print("2. Register in class")
             print("3. Cancel registration")
             print("4. My registrations")
+            print("5. My subscription status")
+            print("6. Buy subscription")
+            print("7. Charge wallet")
             print("0. Exit")
             choice = input("Choose an option: ")
 
@@ -24,10 +29,16 @@ class MemberMenu:
                 self.cancel_registration()
             elif choice == "4":
                 self.show_my_registrations()
+            elif choice == "5":
+                self.show_subscription_status()
+            elif choice == "6":
+                self.buy_subscription()
+            elif choice == "7":
+                self.charge_wallet()
             elif choice == "0":
                 break
             else:
-                print(f"'{choice}' is not a valid option. Please choose 0-4.")
+                print(f"'{choice}' is not a valid option. Please choose 0-7.")
 
     def list_available_classes(self):
         classes = self.class_service.get_all_classes()
@@ -64,3 +75,92 @@ class MemberMenu:
         for r in regs:
             print(f"Class Id : {r.class_id} | Tracking number : {r.tracking_number} "
                   f"| Date : {r.registration_date:%Y-%m-%d %H:%M}")
+
+    def charge_wallet(self):
+        if self.wallet_service is None:
+            print("Wallet service not available.")
+            return
+
+        print("\n--- Wallet Charge ---")
+        try:
+            amount = float(input("Amount: "))
+            if amount <= 0:
+                print("Error: Amount must be positive.")
+                return
+
+            card = input("Card number: ").strip()
+            exp_month = int(input("Exp month: "))
+            exp_year = int(input("Exp year: "))
+            password = input("Card password: ").strip()
+            cvv2 = input("CVV2: ").strip()
+
+            trans = self.wallet_service.charge_wallet(
+                member_id=self.member.id,
+                amount=amount,
+                card=card,
+                exp_month=exp_month,
+                exp_year=exp_year,
+                password=password,
+                cvv2=cvv2,
+            )
+
+            print(f"\nOK! Wallet charged. Balance: {self.member.wallet_balance}")
+            print(f"Tracking number: {trans.tracking_number}")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def show_subscription_status(self):
+        status = self.subscription_service.get_member_status(self.member.id)
+        print(f"Subscription status: {status}")
+
+        active = self.subscription_service.get_active_subscription(self.member.id)
+        if active:
+            print(f"  Type      : {active.subscription_type}")
+            print(f"  Start     : {active.start_date:%Y-%m-%d %H:%M}")
+            print(f"  End       : {active.end_date:%Y-%m-%d %H:%M}")
+            print(f"  Tracking  : {active.tracking_number}")
+            print(f"  Amount    : {active.amount}")
+
+    def buy_subscription(self):
+        if self.subscription_service.has_active_subscription(self.member.id):
+            print("You already have an active subscription.")
+            return
+
+        print("\nAvailable plans:")
+        for kind, plan in self.subscription_service.list_plans():
+            print(f"  {kind}: {plan['name']} - {plan['cost']}")
+
+        kind = input("Choose plan (1month/3month/6month): ").strip()
+
+        try:
+            price = self.subscription_service.get_plan_price(kind)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        if self.member.wallet_balance < price:
+            print(f"Error: Insufficient balance.")
+            print(f"  Needed   : {price}")
+            print(f"  Available: {self.member.wallet_balance}")
+            return
+
+        self.member.wallet_balance -= price
+
+        if self.user_service:
+            self.user_service.save()
+
+        try:
+            sub = self.subscription_service.create_subscription(
+                member_id=self.member.id,
+                kind=kind,
+                amount=price,
+            )
+            print(f"OK! Subscription active until {sub.end_date:%Y-%m-%d %H:%M}")
+            print(f"Tracking number: {sub.tracking_number}")
+        except ValueError as e:
+            self.member.wallet_balance += price
+            if self.user_service:
+                self.user_service.save()   
+            print(f"Error: {e}")
+

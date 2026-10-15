@@ -30,9 +30,11 @@ class ClassService:
                 if len(parts) == 7:
                     schedule = "Not specified"
                     is_active = parts[6] == "True"
-                else:
+                elif len(parts) == 8:
                     schedule = parts[6]
                     is_active = parts[7] == "True"
+                else:
+                    continue
 
                 gym_class = GymClass(
                     id=parts[1],

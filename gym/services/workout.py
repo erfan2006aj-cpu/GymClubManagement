@@ -54,24 +54,6 @@ def line_to_workout(line):
         )
 
 
-
-
-def save_workouts():
-    storage = Storage(WORKOUTS_FILE)
-    lines = [workout_to_line(w) for w in workouts]
-    storage.write_lines(lines)
-
-def find_workouts(workouts,workout_id):
-        for w in workouts:
-            if w["id"] == workout_id:
-                return w
-        return None
-
-def next_id(workouts):
-    if not workouts:
-         return 1
-    return max(w["id"] for w in workouts)+1
-
 class WorkoutService:
     def __init__(self, class_service, registration_service, workouts = None):
         self.class_service = class_service
@@ -233,7 +215,7 @@ class WorkoutService:
         self.save_all()
         return new_exercise
 
-    def remove_exercise(self, working_id, exercise_index):
+    def remove_exercise(self, workout_id, exercise_index):
         workout = self.find_by_id(workout_id)
         if workout is None:
             raise NotFoundError("Workout not found.")

@@ -24,7 +24,7 @@ def view_my_classes(coach_id , class_service):
         print(f"    Capacity : {c.capacity}")
         print(f"    Active   : {c.is_active}")
 
-def select_class(coach_id , class_sevice):
+def select_class(coach_id , class_service):
     all_classes = class_service.get_all_classes()
     my_classes = [c for c in all_classes if str(c.coach_id) == str(coach_id)]
 

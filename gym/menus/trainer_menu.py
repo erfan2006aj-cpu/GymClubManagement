@@ -79,7 +79,7 @@ def select_member(class_id,registration_service):
         print("Please enter a valid number.")
         return None
     
-def vew_workout(workout):
+def view_workout(workout):
     print(f"\n--- Workout ID: {workout.id} ---")
     print(f"    Member ID : {workout.member_id}")
     print(f"    Class ID  : {workout.class_id}")

@@ -45,3 +45,8 @@ class ClassService:
                 )
                 classes.append(gym_class)
         return classes
+    def find_by_id(self, class_id):
+        for gym_class in self.get_all_classes():
+            if str(gym_class.id) == str(class_id):
+                return gym_class
+        return None

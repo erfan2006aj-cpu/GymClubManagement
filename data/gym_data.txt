@@ -1,2 +1,3 @@
 [USERS]
 {"id": 1, "name": "Admin", "username": "admin", "password": "admin@123", "email": "admin@gym.com", "role": "manager", "is_active": true}
+{"id": 2, "name": "Ali", "username": "ali", "password": "ali@123", "email": "ali@gym.com", "role": "member", "is_active": true, "wallet_balance": 0}

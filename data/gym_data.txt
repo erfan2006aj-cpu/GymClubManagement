@@ -1,4 +1,7 @@
 [USERS]
 {"id": 1, "name": "Admin", "username": "admin", "password": "admin@123", "email": "admin@gym.com", "role": "manager", "is_active": true}
 {"id": 2, "name": "Ali", "username": "ali", "password": "ali@123", "email": "ali@gym.com", "role": "member", "is_active": true, "wallet_balance": 0}
-HALL,0,salon1,100,True
+
+[HALLS]
+{"id": "1", "name": "salon1", "capacity": 100, "equipment": ["dumble"], "is_active": true}
+CLASS,0,fitness,1,1,10,saturday 10-12,True

@@ -196,7 +196,7 @@ class UserService:
                 if role == "manager":
                     user = Manager.from_dict(data)
 
-                if role == "member":
+                elif role == "member":
                     user = Member.from_dict(data)
                 elif role == "coach":
                     user = Coach.from_dict(data)

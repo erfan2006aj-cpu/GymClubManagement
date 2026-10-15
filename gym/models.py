@@ -428,6 +428,6 @@ class GymClass:
             hall_id=data["hall_id"],
             capacity=int(data["capacity"]),
             schedule=data["schedule"],
-            price=float(data.get("price",0.0))
+            price=float(data.get("price",0.0)),
             is_active=data.get("is_active", True),
             )

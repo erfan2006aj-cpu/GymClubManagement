@@ -84,6 +84,7 @@ def handle_member_login(user_service: UserService) -> None:
             registration_service=registration_service,
             class_service=class_service,
             subscription_service=subscription_service,
+            user_service=user_service,
         )
 
         # Show menu

@@ -1,10 +1,11 @@
 from gym.services.registrations import Registration_service
 class MemberMenu:
-    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service):
+    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service, user_service=None):
         self.member = member
         self.registration_service = registration_service
         self.class_service = class_service
         self.subscription_service = subscription_service
+        self.user_service = user_service
 
     def show(self):
         while True:
@@ -44,6 +45,8 @@ class MemberMenu:
         try:
             class_id = int(input("Class Id :"))
             reg = self.registration_service.register(self.member, class_id, self.subscription_service)
+            if self.user_service:
+                self.user_service._save()
             print(f"Registration was successful | tracking number : {reg.tracking_number}")
         except ValueError as e:
             print(f"Error : {e}")

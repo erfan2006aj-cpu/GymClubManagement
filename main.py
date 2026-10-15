@@ -30,7 +30,7 @@ def handle_manager_login(user_service: UserService) -> None:
     
     try:
         from gym.menus.manager_menu import manager_menu
-        manager_menu()   # ← بدون پارامتر
+        manager_menu(user_service)   
     except Exception as e:
         print(f"\n[ERROR] Manager panel error: {e}")
 

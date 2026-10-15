@@ -192,7 +192,8 @@ class UserService:
             try:
                 data = json.loads(text)
                 role = data.get("role")
-
+                if role == "manager":
+                    user = Manager.from_dict(data)
                 if role == "member":
                     user = Member.from_dict(data)
                 elif role == "coach":

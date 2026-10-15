@@ -19,13 +19,13 @@ def login(username: str, password: str, role: str, user_service: UserService):
     password = str(password).strip()
     role = str(role).strip().lower()
     
-    # 2. Find user
+    
     user = user_service.find_by_username(username)
     
     if user is None:
         raise NotFoundError("Invalid username or password.")
     
-    # 3. Check role
+    
     if user.role != role:
         raise NotFoundError("Invalid username or password.")
     

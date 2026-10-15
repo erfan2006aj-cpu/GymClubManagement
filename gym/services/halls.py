@@ -7,7 +7,7 @@ class HallService:
     def add_hall(self, hall):
         all_halls = self.get_all_halls()
         for existing_hall in all_halls:
-            if existing_hall.id == hall.id:
+            if str(existing_hall.id) == str(hall.id):
                 print("This hall ID already exists.")
                 return
         data = (f"HALL,{hall.id},{hall.name},"

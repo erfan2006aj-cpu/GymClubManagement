@@ -264,7 +264,7 @@ class Registration:
     id: int
     class_id: int
     member_id: int
-    tracking_number: int
+    tracking_number: str
     is_active: bool
     registration_date: datetime
 

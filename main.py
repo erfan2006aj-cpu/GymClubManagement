@@ -39,8 +39,26 @@ def handle_coach_login(user_service: UserService) -> None:
     user = login_flow("coach", user_service)
     if user is None:
         return
-    print("\n[INFO] Coach panel is under development.")
+    try:
+        from gym.services.classes import ClassService
+        from gym.services.registrations import Registration_service
+        from gym.services.workout import WorkoutService
+        from gym.menus.trainer_menu import trainer_menu
 
+        
+        class_service = ClassService()
+        registration_service = Registration_service([], class_service)
+        workout_service = WorkoutService(class_service, registration_service)
+
+        
+        trainer_menu(
+            coach_id=user.id,
+            workout_service=workout_service,
+            class_service=class_service,
+            registration_service=registration_service,
+        )
+    except Exception as e:
+        print(f"\n[ERROR] Coach panel error: {e}")
 
 def handle_member_login(user_service: UserService) -> None:
     user = login_flow("member", user_service)

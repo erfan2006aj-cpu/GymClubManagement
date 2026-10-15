@@ -1,4 +1,5 @@
 from gym.models import Workout,Exercise
+from gym.storage import load_data
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage
@@ -53,6 +54,16 @@ def line_to_workout(line):
             exercises=exercises,
         )
 
+def load_workouts():
+    storage=Storage(WORKOUTS_FILE)
+    workouts = []
+    for line in storage.read_line():
+        if not line.strip():
+            continue
+        w=line_to_workout(line)
+        if w:
+            workouts.append(w)
+    return workouts
 
 class WorkoutService:
     def __init__(self, class_service, registration_service, workouts = None):

@@ -8,6 +8,7 @@ from gym.services.users import UserService
 
 def login(username: str, password: str, role: str, user_service: UserService):
     
+  
     if not username or not str(username).strip():
         raise ValidationError("Username cannot be empty.")
     
@@ -28,15 +29,15 @@ def login(username: str, password: str, role: str, user_service: UserService):
     if user.role != role:
         raise NotFoundError("Invalid username or password.")
     
-    
+
     if user.password != password:
         raise NotFoundError("Invalid username or password.")
     
-    
+
     if not user.is_active:
         raise AccountDisabledError("Your account has been disabled.")
     
-   
+
     return user
 
 

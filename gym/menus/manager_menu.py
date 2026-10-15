@@ -132,9 +132,8 @@ def user_management_menu(user_service):
         except OSError as error:
             print(f"Could not save changes: {error}")
 
-def manager_menu():
-    user_service = UserService()
-
+def manager_menu(user_service):
+   
     while True:
         print("\n===== Manager Menu =====")
         print("1. User Management")

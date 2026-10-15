@@ -14,7 +14,7 @@ def view_my_classes(coach_id , class_service):
     my_classes = [c for c in all_classes if str(c.coach_id) == str(coach_id)]
 
     if not my_classes:
-        print("کلاسی برای شما نییست")
+        print("You have no classes.")
         return
     
     for i,c in enumerate(my_classes,1):
@@ -29,14 +29,14 @@ def select_class(coach_id , class_sevice):
     my_classes = [c for c in all_classes if str(c.coach_id) == str(coach_id)]
 
     if not my_classes:
-        print(" کلاس برای شما نیست")
+        print("You have no classes.")
         return None
 
     print("\n --- select a Class -- ")
     for i,c in enumerate(my_classes,1):
         print(f" {i}.{c.name}  (ID : {c.id})")
 
-    choice = input("خب یک شماره کلاس انتخاب کنید :(از عدد 0 ا cancel )")
+    choice = input("choose a class number(0 to cancel):")
     if choice == "0":
         return None
     
@@ -44,28 +44,28 @@ def select_class(coach_id , class_sevice):
         index = int(choice) -1
         if 0<= index<len(my_classes):
             return my_classes[index]
-        print("شماره کلاس نامعتبر است")
+        print("Invalid class number.")
         return None
     except ValueError:
-        print("جان جدت یک شماره کلاس درست بزن")
+        print("Please enter a valid class number.")
         return None
     
 def select_member(class_id,registration_service):
     try:
         registrations = registration_service.get_class_members(class_id)
     except Exception as e:
-        print(f"خطا در لود کردن :{e}")
+        print(f"Error loading data: {e}")
         return None
 
     if not registrations:
-        print("اعضا رجیستر شده درداخل کلاس نیست")
+        print("No members registered in this class.")
         return None
     
     print("\n --- Select a Number ---")
     for i,r in enumerate(registrations,1):
         print(f" {i}.Member ID : {r.member_id} (Tracking: {r.tracking_number})")
 
-        choice = input("خب یک شماره کلاس انتخاب کنید :(از عدد 0 ا cancel )").strip()
+        choice = input("Choose a member number (0 to cancel): ").strip()
     if choice == "0":
         return None
     
@@ -73,10 +73,10 @@ def select_member(class_id,registration_service):
         index = int(choice)-1
         if 0 <= index < len(registrations):
             return registrations[index]
-        print("شماره عضو نامعتبر است")
+        print("Invalid memmber number.")
         return None
     except ValueError:
-        print("یک شماره معتبر ثبت کنید")
+        print("Please enter a valid number.")
         return None
     
 def vew_workout(workout):
@@ -86,7 +86,7 @@ def vew_workout(workout):
     print(f"    Coach ID  : {workout.coach_id}")
 
     if not workout.exercises:
-        print("    (هنوز تمیرینی نیست .)")
+        print("No exercises recorded yet.")
         return
 
     print("\n    Exercises:")
@@ -100,7 +100,7 @@ def vew_workout(workout):
 def get_exercise_input():
     name=input("Exercise name : ").strip()
     if not name:
-        print("اسمی با این اسم نیست")
+        print("Exercise name cannot be empty.")
         return None
     
     sets_str = input("Sets: ").strip()
@@ -131,15 +131,15 @@ def create_workout_flow(coach_id, workout_service, class_service, registration_s
             class_id=gym_class.id,
             member_id=member_reg.member_id,
         )
-        print(f"\n با موفقیت یک تمرین ساخته شد (ID: {workout.id})")
+        print(f"\nWorkout created successfully (ID: {workout.id})")
     except (AccessDeniedError, ValidationError, DuplicateError) as e:
-        print(f"خطا {e}")
+        print(f"Error: {e}")
 
 def view_workouts_flow(coach_id, workout_service):
     workouts = workout_service.get_workouts_by_coach(coach_id)
 
     if not workouts:
-        print("تمیرین یافت نشد.")
+        print("No workout found.")
         return
 
     for w in workouts:
@@ -156,11 +156,11 @@ def add_exercise_flow(workout_service):
 
     try:
         workout_service.add_exercise(int(workout_id), exercise_data)
-        print("با موفقیت یک تمرین اضافه شد")
+        print("Exercise added successfully.")
     except (NotFoundError, ValidationError) as e:
-        print(f"خطا {e}")
+        print(f"Error: {e}")
     except ValueError:
-        print("آی دی تمرین نامعتبر است")
+        print("Invalid workout ID")
 
 def edit_exercise_flow(workout_service):
     workout_id = input("Workout ID: ").strip()
@@ -171,7 +171,7 @@ def edit_exercise_flow(workout_service):
         workout = workout_service.get_workout(int(workout_id))
         view_workout(workout)
 
-        index_str = input("فهرست تمرین ها برای ویرایش (1-based): ").strip()
+        index_str = input("Exercise number to edit (1-based): ").strip()
         index = int(index_str) - 1
 
         new_data = get_exercise_input()
@@ -179,11 +179,11 @@ def edit_exercise_flow(workout_service):
             return
 
         workout_service.edit_exercise(int(workout_id), index, new_data)
-        print("با موفقیت تمرین آپدیت شد")
+        print("Exercise edited successfully.")
     except (NotFoundError, ValidationError) as e:
-        print(f"خطا {e}")
+        print(f"Error {e}")
     except ValueError:
-        print("ورودی نامعتبر است")
+        print("Invalid input")
 
 def remove_exercise_flow(workout_service):
     workout_id = input("Workout ID: ").strip()
@@ -194,15 +194,15 @@ def remove_exercise_flow(workout_service):
         workout = workout_service.get_workout(int(workout_id))
         view_workout(workout)
 
-        index_str = input("فهرست تمرین ها برای حذف(1-based): ").strip()
+        index_str = input("Exercise number to remove (1-based): ").strip()
         index = int(index_str) - 1
 
         workout_service.remove_exercise(int(workout_id), index)
-        print("با موفقیت تمرین حذف شد")
+        print("Exercise removed successfully.")
     except (NotFoundError, ValidationError) as e:
-        print(f"خطا {e}")
+        print(f"Error {e}")
     except ValueError:
-        print("ورودی نا معتبر است")
+        print("Invalid input.")
 
 def manage_workouts(coach_id, workout_service, class_service, registration_service):
     while True:
@@ -229,7 +229,7 @@ def manage_workouts(coach_id, workout_service, class_service, registration_servi
         elif choice == "6":
             return
         else:
-            print("انتخاب نامعتبر است")
+            print("Invalid choice.")
 
 def trainer_menu(coach_id, workout_service, class_service, registration_service):
     while True:
@@ -248,5 +248,5 @@ def trainer_menu(coach_id, workout_service, class_service, registration_service)
             print("Logging out...")
             return
         else:
-            print("انتخاب نامعتبر است ولی لطفا دوباره تلاش کنید.")
+            print("Invalid Choice. Please try again.")
             

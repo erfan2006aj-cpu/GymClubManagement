@@ -64,7 +64,32 @@ def handle_member_login(user_service: UserService) -> None:
     user = login_flow("member", user_service)
     if user is None:
         return
-    print("\n[INFO] Member panel is under development.")
+
+    try:
+        from gym.services.classes import ClassService
+        from gym.services.registrations import Registration_service
+        from gym.services.subscriptions import SubscriptionService
+        from gym.services.wallet import WalletService
+        from gym.menus.member_menu import MemberMenu
+
+        # Build services
+        class_service = ClassService()
+        registration_service = Registration_service([], class_service)
+        subscription_service = SubscriptionService()
+        wallet_service = WalletService(user_service, subscription_service)
+
+        # Build member menu
+        member_menu = MemberMenu(
+            member=user,
+            registration_service=registration_service,
+            class_service=class_service,
+            subscription_service=subscription_service,
+        )
+
+        # Show menu
+        member_menu.show()
+    except Exception as e:
+        print(f"\n[ERROR] Member panel error: {e}")
 
 
 def main() -> None:

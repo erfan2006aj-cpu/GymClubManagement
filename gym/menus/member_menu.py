@@ -10,46 +10,64 @@ class MemberMenu:
 
     def show(self):
         while True:
-            print("\n ====Member Menu====")
-            print("1. Show available classes")
-            print("2. Register in class")
-            print("3. Cancel registration")
-            print("4. My registrations")
-            print("5. My subscription status")
-            print("6. Buy subscription")
-            print("7. Charge wallet")
-            print("0. Exit")
-            choice = input("Choose an option: ")
+            try:
+                print("\n ====Member Menu====")
+                print(f" Balance: {self.member.wallet_balance}")
+                print("-" * 25)
+                print("1. Show available classes")
+                print("2. Register in class")
+                print("3. Cancel registration")
+                print("4. My registrations")
+                print("5. My subscription status")
+                print("6. Buy subscription")
+                print("7. Charge wallet")
+                print("8. My transactions")
+                print("0. Exit")
+                choice = input("Choose an option: ")
 
-            if choice == "1":
-                self.list_available_classes()
-            elif choice == "2":
-                self.register_to_class()
-            elif choice == "3":
-                self.cancel_registration()
-            elif choice == "4":
-                self.show_my_registrations()
-            elif choice == "5":
-                self.show_subscription_status()
-            elif choice == "6":
-                self.buy_subscription()
-            elif choice == "7":
-                self.charge_wallet()
-            elif choice == "0":
+                if choice == "1":
+                    self.list_available_classes()
+                elif choice == "2":
+                    self.register_to_class()
+                elif choice == "3":
+                    self.cancel_registration()
+                elif choice == "4":
+                    self.show_my_registrations()
+                elif choice == "5":
+                    self.show_subscription_status()
+                elif choice == "6":
+                    self.buy_subscription()
+                elif choice == "7":
+                    self.charge_wallet()
+                elif choice == "8":
+                    self.show_transactions()
+                elif choice == "0":
+                    break
+                else:
+                    print(f"'{choice}' is not a valid option. Please choose 0-8.")
+            except KeyboardInterrupt:
+                print("\nReturning to main menu...")
                 break
-            else:
-                print(f"'{choice}' is not a valid option. Please choose 0-7.")
+            except Exception as e:
+                print(f"\n[ERROR] : {e}")
 
     def list_available_classes(self):
-        classes = self.class_service.get_all_classes()
-        for c in classes:
-            if not c.is_active:
-                continue
-            registered = len(self.registration_service.get_class_members(c.id))
-            if registered >= c.capacity:
-                continue
-            remaining = c.capacity - registered
-            print(f"ID= {c.id} | {c.name} |capacity: {remaining}")
+        try:
+            classes = self.class_service.get_all_classes()
+            found = False
+            for c in classes:
+                if not c.is_active:
+                    continue
+                registered = len(self.registration_service.get_class_members(c.id))
+                if registered >= c.capacity:
+                    continue
+                remaining = c.capacity - registered
+                print(f"ID= {c.id} | {c.name} | capacity: {remaining}")
+                found = True
+            if not found:
+                print("No available classes found.")
+        except Exception as e:
+            print(f"Error: {e}")
 
     def register_to_class(self):
         try:
@@ -165,4 +183,28 @@ class MemberMenu:
             if self.user_service:
                 self.user_service.save()   
             print(f"Error: {e}")
+
+    def show_transactions(self):
+        if self.wallet_service is None:
+            print("Wallet service not available.")
+            return
+
+        try:
+            transactions = self.wallet_service.get_transactions(self.member.id)
+        except Exception as e:
+            print(f"Error: {e}")
+            return
+
+        if not transactions:
+            print("You do not have any transactions.")
+            return
+
+        print(f"\n--- My Transactions ({len(transactions)}) ---")
+        print(f"{'Date':<18} {'Type':<10} {'Amount':<12} {'Tracking':<12} Description")
+        print("-" * 75)
+
+        for t in transactions:
+            date_str = t.date.strftime("%Y-%m-%d %H:%M")
+            print(f"{date_str:<18} {t.transaction_type:<10} "
+                  f"{t.amount:<12} {t.tracking_number:<12} {t.description}")
 

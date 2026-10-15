@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 from gym.models import Registration
+from gym.storage import Storage
 class Registration_service:
     def __init__(self,registrations: list[Registration],class_service):
         self.registrations = registrations
@@ -64,7 +65,19 @@ class Registration_service:
         return [r for r in self.registrations if r.class_id == class_id and r.is_active]
 
     def _load_registrations(self) -> list[Registration]:
-        pass
+        registrations = []
+        for line in self.storage.read_lines():
+            parts = line.split(",")
+            if parts[0] == "REGISTRATION" and len(parts) == 7:
+                registrations.append(Registration(
+                    id=int(parts[1]),
+                    class_id=int(parts[2]),
+                    member_id=int(parts[3]),
+                    tracking_number=parts[4],
+                    is_active=parts[5] == "True",
+                    registration_date=datetime.fromisoformat(parts[6]),
+                ))
+        return registrations
 
     def _save_registration(self, r: Registration):
         pass

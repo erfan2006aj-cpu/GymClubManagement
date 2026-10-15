@@ -5,12 +5,13 @@ class Registration_service:
     def __init__(self,registrations: list[Registration],class_service):
         self.registrations = registrations
         self.class_service = class_service
-        self.next_id = max([r.id for r in registrations], default=0) + 1
+        self.next_id = max((r.id for r in registrations), default=0) + 1
 
     def generate_tracking_number(self) -> int:
+        used = {r.tracking_number for r in self.registrations}
         while True:
             number = random.randint(100000, 999999)
-            if not any(r.tracking_number == number for r in self.registrations):
+            if number not in used:
                 return number
 
     def find_active(self, member_id: int, class_id: int):

@@ -2,9 +2,10 @@ from datetime import datetime
 import random
 from gym.models import Registration
 from gym.storage import Storage
+DATA_PATH = "data/gym_data.txt"
 class Registration_service:
-    def __init__(self,class_service,storage_path="data/gym_data.txt"):
-        self.storage = Storage(storage_path)
+    def __init__(self, class_service):
+        self.storage = Storage(DATA_PATH)
         self.registrations = self._load_registrations()
         self.class_service = class_service
         self.next_id = max((r.id for r in self.registrations), default=0) + 1

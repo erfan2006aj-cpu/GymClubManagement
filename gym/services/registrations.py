@@ -2,6 +2,7 @@ from datetime import datetime
 import random
 from gym.models import Registration
 from gym.storage import Storage
+from gym.exceptions import InsufficientBalanceError
 DATA_PATH = "data/gym_data.txt"
 class Registration_service:
     def __init__(self, class_service):
@@ -43,6 +44,13 @@ class Registration_service:
 
         if not subscription_service.has_active_subscription(member.id):
             raise ValueError("You do not have subscription")
+        if hasattr(member, "wallet_balance"):
+            if member.wallet_balance < gym_class.price:
+                raise InsufficientBalanceError(
+                    f"Insufficient wallet balance."
+                    f"you need {gym_class.price}, but you have {member.walllet_balance}."
+                )
+            member.wallet_balance -= gym_class.price
 
         registration = Registration(
             id=self.next_id,

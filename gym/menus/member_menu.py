@@ -55,6 +55,8 @@ class MemberMenu:
         try:
             class_id = int(input("Class Id :"))
             reg = self.registration_service.register(self.member, class_id, self.subscription_service)
+            if self.user_service:
+                self.user_service._save()
             print(f"Registration was successful | tracking number : {reg.tracking_number}")
         except ValueError as e:
             print(f"Error : {e}")

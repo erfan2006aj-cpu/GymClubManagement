@@ -235,7 +235,7 @@ class WorkoutService:
 
         self.workouts.append(workout)
         self.next_id += 1
-        self._save_all()
+        self.save_all()
 
         return workout
     

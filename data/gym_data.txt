@@ -6,4 +6,8 @@
 {"id": "1", "name": "salon1", "capacity": 100, "equipment": ["dumble"], "is_active": true}
 
 [CLASSES]
-{"id": "1", "name": "fitness", "coach_id": "3", "hall_id": "1", "capacity": 10, "schedule": "saturday 11-12", "is_active": true}
+{"id": "1", "name": "fitness", "coach_id": "3", "hall_id": "1", "capacity": 10, "schedule": "saturday 11-12", "price": "saturday 11-12", "is_active": true}
+{"id": "2", "name": "trx", "coach_id": "3", "hall_id": "1", "capacity": 12, "schedule": "sunday 10-11", "price": "sunday 10-11", "is_active": true}
+
+[SUBSCRIPTIONS]
+1|2|1month|500000|2026-10-16T09:40:27.300009|2026-11-15T09:40:27.300009|995612|True

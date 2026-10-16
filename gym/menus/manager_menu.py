@@ -253,15 +253,7 @@ def class_management_menu(class_service, user_service, hall_service):
                 if not schedule:
                     print("Error: Schedule cannot be empty.")
                     continue
-                price_str = input("Price: ").strip()
-                try:
-                    price = float(price_str)
-                    if price < 0:
-                        print("Error: price cannot be negative.")
-                        continue
-                except ValueError:
-                    print("Error: price must be a number.")
-                    continue
+                
                 
                 
                 from gym.models import GymClass
@@ -272,7 +264,6 @@ def class_management_menu(class_service, user_service, hall_service):
                     hall_id=str(hall.id),
                     capacity=int(capacity_str),
                     schedule=schedule,
-                    price=price,
                     is_active=True,
                 )
                 

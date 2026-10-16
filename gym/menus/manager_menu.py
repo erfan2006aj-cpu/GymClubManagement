@@ -172,10 +172,11 @@ def hall_management_menu(hall_service):
                 if not halls:
                     print("No halls found.")
                 else:
-                    print(f"\n{'ID':<5} {'Name':<20} {'Capacity':<10} {'Active'}")
+                    print(f"\n{'ID':<5} {'Name':<20} {'Capacity':<10} {'Active'}  ")
                     print("-" * 50)
                     for h in halls:
-                        print(f"{h.id:<5} {h.name:<20} {h.capacity:<10} {h.is_active}")
+                        equipment_str = ", ".join(h.equipment) if h.equipment else "None"
+                        print(f"{h.id:<5} {h.name:<20} {h.capacity:<10} {h.is_active}  {equipment_str}")
             except Exception as e:
                 print(f"Error: {e}")
         

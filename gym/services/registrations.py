@@ -20,7 +20,7 @@ class Registration_service:
 
     def find_active(self, member_id: int, class_id: int):
         for r in self.registrations:
-            if (r.member_id == member_id and r.class_id == class_id and r.is_active):
+            if (str(r.member_id) == str(member_id) and str(r.class_id) == str(class_id) and r.is_active):
                 return r
         return None
 
@@ -77,7 +77,7 @@ class Registration_service:
         return [r for r in self.registrations if r.member_id == member_id and r.is_active]
 
     def get_class_members(self, class_id: int) -> list[Registration]:
-        return [r for r in self.registrations if r.class_id == class_id and r.is_active]
+        return [r for r in self.registrations if str(r.class_id) == str(class_id) and r.is_active]
 
     def _load_registrations(self) -> list[Registration]:
         registrations = []

@@ -429,6 +429,8 @@ def manager_menu(user_service):
                 if hall_choice == "1":
                     hall_id = input("Hall ID: ").strip()
                     name = input("Hall name: ").strip()
+                    equipment_str = input("Equipment (comma-separated): ").strip()
+                    equipment = equipment_str.split(",") if equipment_str else []
 
                     try:
                         capacity = int(input("Capacity: ").strip())
@@ -436,6 +438,7 @@ def manager_menu(user_service):
                             id=hall_id,
                             name=name,
                             capacity=capacity,
+                            equipment=equipment,
                             is_active=True
                         )
                         hall_service.add_hall(hall)

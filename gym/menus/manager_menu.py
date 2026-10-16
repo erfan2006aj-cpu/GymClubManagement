@@ -422,7 +422,8 @@ def manager_menu(user_service):
                 print("\n===== Hall Management =====")
                 print("1. Add Hall")
                 print("2. Show All Halls")
-                print("3. Back")
+                print("3. Toggle Hall Active")
+                print("4. Back")
 
                 hall_choice = input("Choose an option: ").strip()
 
@@ -453,7 +454,18 @@ def manager_menu(user_service):
                         for hall in halls:
                             print(hall)
 
+
                 elif hall_choice == "3":
+                    hall_id = input("Hall ID: ").strip()
+                    hall = hall_service.find_by_id(hall_id)
+                    if hall is None:
+                        print(f"Error: No hall found with ID {hall_id}.")
+                    else:
+                        hall_service.set_active(hall, not hall.is_active)
+                        status = "active" if hall.is_active else "inactive"
+                        print(f"Hall {hall.name} is now {status}.")
+
+                elif hall_choice == "4":
                     break
 
                 else:
@@ -464,7 +476,8 @@ def manager_menu(user_service):
                 print("\n===== Class Management =====")
                 print("1. Add Class")
                 print("2. Show All Classes")
-                print("3. Back")
+                print("3. Toggle Class Active")
+                print("4. Back")
 
                 class_choice = input("Choose an option: ").strip()
 
@@ -500,10 +513,20 @@ def manager_menu(user_service):
                             print(gym_class)
 
                 elif class_choice == "3":
-                    break
+                    class_id = input("Class ID: ").strip()
+                    gym_class = class_service.find_by_id(class_id)
+                    if gym_class is None:
+                            print(f"Error: No class found with ID {class_id}.")
+                    else:
+                            class_service.set_active(gym_class, not gym_class.is_active)
+                            status = "active" if gym_class.is_active else "inactive"
+                            print(f"Class {gym_class.name} is now {status}.")
+
+                elif class_choice == "4":
+                        break
 
                 else:
-                    print("Invalid choice.")
+                        print("Invalid choice.")
 
 
             

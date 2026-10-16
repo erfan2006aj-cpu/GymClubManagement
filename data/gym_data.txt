@@ -1,0 +1,9 @@
+[USERS]
+{"id": 1, "name": "Admin", "username": "admin", "password": "admin@123", "email": "admin@gym.com", "role": "manager", "is_active": true}
+{"id": 2, "name": "Ali", "username": "ali", "password": "ali@123", "email": "ali@gym.com", "role": "member", "is_active": true, "wallet_balance": 0}
+{"id": 3, "name": "Sara", "username": "sara", "password": "sara@123", "email": "sara@gym.com", "role": "coach", "is_active": true}
+[HALLS]
+{"id": "1", "name": "salon1", "capacity": 100, "equipment": ["dumble"], "is_active": true}
+
+[CLASSES]
+{"id": "1", "name": "fitness", "coach_id": "3", "hall_id": "1", "capacity": 10, "schedule": "saturday 11-12", "is_active": true}

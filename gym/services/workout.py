@@ -1,11 +1,10 @@
 from gym.models import Workout,Exercise
-from gym.storage import load_data
 from gym.exceptions import NotFoundError,AccessDeniedError,ValidationError,DuplicateError
 from gym.validators import is_positive_integer
 from gym.storage import Storage
 from gym.models import Exercise
 
-WORKOUTS_FILE = "gym_data/workouts.txt"
+WORKOUTS_FILE = "data/gym_data.txt"
 
 def workout_to_line(workout):
     #Workout --> String
@@ -54,26 +53,72 @@ def line_to_workout(line):
             exercises=exercises,
         )
 
-def load_workouts():
-    storage=Storage(WORKOUTS_FILE)
-    workouts = []
-    for line in storage.read_line():
-        if not line.strip():
-            continue
-        w=line_to_workout(line)
-        if w:
-            workouts.append(w)
-    return workouts
 
+class WorkoutService:
+    def __init__(self, class_service, registration_service, workouts = None):
+        self.class_service = class_service
+        self.registration_service = registration_service
+        self.workouts = workouts if workouts else self.load_all()
+        self.next_id = max([w.id for w in self.workouts if w.id], default=0) + 1
 
-def save_workouts():
-    storage = Storage(WORKOUTS_FILE)
-    lines = [workout_to_line(w) for w in workouts]
-    storage.write_lines(lines)
-
-def find_workouts(workouts,workout_id):
-        for w in workouts:
-            if w["id"] == workout_id:
+    def load_all(self):
+        storage = Storage(WORKOUTS_FILE)
+        workouts = []
+        marker = "[WORKOUTS]"
+        inside_section = False
+    
+        for line in storage.read_lines():
+            text = line.strip()
+        
+            if text.startswith("[") and text.endswith("]"):
+                inside_section = (text == marker)
+                continue
+        
+            if not inside_section or not text:
+                continue
+        
+            try:
+                w = line_to_workout(text)
+                if w:
+                    workouts.append(w)
+            except Exception:
+                continue
+    
+        return workouts
+    
+    def save_all(self):
+    
+        storage = Storage(WORKOUTS_FILE)
+        lines = storage.read_lines()
+        marker = "[WORKOUTS]"
+    
+        start = None
+        end = None
+    
+        for i, line in enumerate(lines):
+            if line.strip() == marker:
+                start = i
+                end = i + 1
+                while end < len(lines) and not lines[end].strip().startswith("["):
+                    end += 1
+                break
+    
+        workout_lines = [workout_to_line(w) for w in self.workouts]
+    
+        if start is None:
+        
+            if lines and lines[-1].strip():
+                lines.append("")
+            lines.append(marker)
+            lines.extend(workout_lines)
+        else:
+        
+            lines[start + 1:end] = workout_lines
+    
+        storage.write_lines(lines)
+    def find_by_id(self, workout_id):
+        for w in self.workouts:
+            if str(w.id) == str(workout_id):
                 return w
         return None
 
@@ -102,7 +147,32 @@ class WorkoutService:
     
     def save_all(self):
         storage = Storage(WORKOUTS_FILE)
-        lines = [workout_to_line(w) for w in self.workouts]
+        lines = storage.read_lines()
+        marker = "[WORKOUTS]"
+
+        start = None
+        end = None
+
+        for i, line in enumerate(lines):
+            if line.strip() == marker:
+                start = i
+                end = i + 1
+                while end < len(lines) and not lines[end].strip().startswith("["):
+                    end += 1
+                break
+
+        workout_lines = [workout_to_line(w) for w in self.workouts]
+
+        if start is None:
+        
+            if lines and lines[-1].strip():
+                lines.append("")
+            lines.append(marker)
+            lines.extend(workout_lines)
+        
+        else:
+        
+            lines[start + 1:end] = workout_lines
         storage.write_lines(lines)
 
     def find_by_id(self, workout_id):
@@ -131,15 +201,15 @@ class WorkoutService:
     def create_workout(self,coach_id ,class_id ,member_id):
         #چک کلاس مالک
         if not self._class_belongs_to_coach(class_id, coach_id):
-            raise AccessDeniedError("این کلاس متعلق به شما نیست.")
+            raise AccessDeniedError("class does not belong to coach.")
 
         #چک ثبت نامی
         if not self._is_registered(member_id, class_id):
-            raise ValidationError("این عضو در این کلاس ثبت‌نام نکرده است.")
+            raise ValidationError("This member is not registered in this class.")
 
         #چک تکراری نباشه
         if self.get_member_workout(member_id, class_id) is not None:
-            raise DuplicateError("برای این عضو قبلاً برنامه ساخته شده است.")
+            raise DuplicateError("A workout already exists for this member.")
         
         workout = Workout(
             id=self.next_id,
@@ -155,16 +225,16 @@ class WorkoutService:
 
         return workout
     
-    def add_exercise(self, workout_id, exercise_data):#اضافه تمیرین 
+    def add_exercise(self, workout_id, exercise_data):
         workout = self.find_by_id(workout_id)
         if workout is None:
-            raise NotFoundError("برنامه تمرینی پیدا نشد.")
+            raise NotFoundError("Workout not found.")
 
         if not is_positive_integer(exercise_data.get("sets")):
-            raise ValidationError("تعداد ست باید عدد صحیح مثبت باشه.")
+            raise ValidationError("Sets must be a positive integer.")
 
         if not is_positive_integer(exercise_data.get("reps")):
-            raise ValidationError("تعداد تکرار باید عدد صحیح مثبت باشه.")
+            raise ValidationError("Reps must be a positive integer.")
 
         exercise = Exercise(
             name=exercise_data["name"],
@@ -178,19 +248,19 @@ class WorkoutService:
         self.save_all()
         return exercise
     
-    def edit_exercise(self , workout_id, exercise_index, new_data):#با ایندکس برای ویرایش
+    def edit_exercise(self , workout_id, exercise_index, new_data):
         workout = self.find_by_id(workout_id)
         if workout is None :
-            raise NotFoundError("برنامه تمرینی نیست")
+            raise NotFoundError("Workout not found.")
         
         if not (0<= exercise_index < len(workout.exercises)):
-            raise ValidationError("مشکل حرکت ایندکس")
+            raise ValidationError("Invalid exercise index.")
         
         if not is_positive_integer(new_data.get("sets")):
-            raise ValidationError("تعداد ست هاباید عدد مثبت باشه و صحیح")
+            raise ValidationError("Sets must be a positive integer.")
         
         if not is_positive_integer(new_data.get("reps")):
-            raise ValidationError("تعداد تکرار باید عدد صحیح مثبت باشه.")
+            raise ValidationError("Reps must be a positive integer.")
 
         new_exercise = Exercise(
             name=new_data["name"],
@@ -204,13 +274,13 @@ class WorkoutService:
         self.save_all()
         return new_exercise
 
-    def remove_exercise(self, working_id, exercise_index):#حذف حرکت ایندکس
+    def remove_exercise(self, workout_id, exercise_index):
         workout = self.find_by_id(workout_id)
         if workout is None:
-            raise NotFoundError("برنامه تمرینی پیدا نشد.")
+            raise NotFoundError("Workout not found.")
 
         if not (0 <= exercise_index < len(workout.exercises)):
-            raise ValidationError("ایندکس حرکت نامعتبر است.")
+            raise ValidationError("Invalid exercise index.")
 
         workout.remove_exercise(exercise_index)
         self.save_all()
@@ -218,7 +288,7 @@ class WorkoutService:
     def get_workout(self, workout_id):
         workout = self.find_by_id(workout_id)
         if workout in None:
-            raise NotFoundError("برنامه تمیرین نیست")
+            raise NotFoundError("Workout not found.")
         return workout
     
     def get_workout_by_coach(self,coach_id):

@@ -12,9 +12,9 @@ SPLITTER = "|"
 NUM_PARTS = 8
 
 PLANS = {
-    "1month": {"name": "یک ماهه", "days": 30, "cost": 500000},
-    "3month": {"name": "سه ماهه", "days": 90, "cost": 1350000},
-    "6month": {"name": "شش ماهه", "days": 180, "cost": 2500000},
+    "1month": {"name": "1 Months", "days": 30, "cost": 500000},
+    "3month": {"name": "3 Months", "days": 90, "cost": 1350000},
+    "6month": {"name": "6 Months", "days": 180, "cost": 2500000},
 }
 
 
@@ -30,18 +30,18 @@ class SubscriptionService:
 
     def get_plan_price(self, kind):
         if kind not in PLANS:
-            raise ValidationError("نوع اشتراک نامعتبر")
+            raise ValidationError("Invalid subscription plan")
         return PLANS[kind]["cost"]
 
     def get_plan_label(self, kind):
         if kind not in PLANS:
-            raise ValidationError("نوع اشتراک نامعتبر")
+            raise ValidationError("Invalid subscription plan")
         return PLANS[kind]["name"]
 
 
     def create_subscription(self, member_id, kind, amount):
         if kind not in PLANS:
-            raise ValidationError("نوع اشتراک نامعتبر")
+            raise ValidationError("Invalid subscription plan")
 
         start = datetime.now()
         old = self.get_active_subscription(member_id)
@@ -126,7 +126,7 @@ class SubscriptionService:
             try:
                 self._subscriptions.append(self._from_line(t))
             except Exception:
-                print(f"خط {number} نامعتبره")
+                print(f"Invalid line {number}")
 
     def _save(self, sub):
         line = self._to_line(sub)

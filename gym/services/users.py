@@ -1,6 +1,6 @@
 import re
 import json
-from gym.models import Coach, Member
+from gym.models import Coach, Member, Manager
 from gym.storage import Storage
 ALLOWED_ROLES = {"member", "coach"}
 def is_valid_email(email):
@@ -193,7 +193,10 @@ class UserService:
                 data = json.loads(text)
                 role = data.get("role")
 
-                if role == "member":
+                if role == "manager":
+                    user = Manager.from_dict(data)
+
+                elif role == "member":
                     user = Member.from_dict(data)
                 elif role == "coach":
                     user = Coach.from_dict(data)
@@ -318,3 +321,5 @@ class UserService:
             raise
 
         return user
+    def save(self):
+        self._save()

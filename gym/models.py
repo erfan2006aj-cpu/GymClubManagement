@@ -264,7 +264,7 @@ class Registration:
     id: int
     class_id: int
     member_id: int
-    tracking_number: int
+    tracking_number: str
     is_active: bool
     registration_date: datetime
 
@@ -404,6 +404,7 @@ class GymClass:
     hall_id: str
     capacity: int
     schedule: str
+    price: float = 0.0
     is_active: bool = True
 
     def to_dict(self) -> dict:
@@ -414,6 +415,7 @@ class GymClass:
             "hall_id": self.hall_id,
             "capacity": self.capacity,
             "schedule": self.schedule,
+            "price": self.schedule,
             "is_active": self.is_active,
         }
 
@@ -426,5 +428,6 @@ class GymClass:
             hall_id=data["hall_id"],
             capacity=int(data["capacity"]),
             schedule=data["schedule"],
+            price=float(data.get("price",0.0)),
             is_active=data.get("is_active", True),
             )

@@ -20,11 +20,11 @@ def view_my_classes(coach_id , class_service):
     for i,c in enumerate(my_classes,1):
         print(f"\n [ {i}] {c.name}")
         print(f"    ID : {c.id}")
-        print(f"    Schedule : {c.Schedule}")
+        print(f"    Schedule : {c.schedule}")
         print(f"    Capacity : {c.capacity}")
         print(f"    Active   : {c.is_active}")
 
-def select_class(coach_id , class_sevice):
+def select_class(coach_id , class_service):
     all_classes = class_service.get_all_classes()
     my_classes = [c for c in all_classes if str(c.coach_id) == str(coach_id)]
 
@@ -65,7 +65,7 @@ def select_member(class_id,registration_service):
     for i,r in enumerate(registrations,1):
         print(f" {i}.Member ID : {r.member_id} (Tracking: {r.tracking_number})")
 
-        choice = input("Choose a member number (0 to cancel): ").strip()
+    choice = input("Choose a member number (0 to cancel): ").strip()
     if choice == "0":
         return None
     
@@ -79,7 +79,7 @@ def select_member(class_id,registration_service):
         print("Please enter a valid number.")
         return None
     
-def vew_workout(workout):
+def view_workout(workout):
     print(f"\n--- Workout ID: {workout.id} ---")
     print(f"    Member ID : {workout.member_id}")
     print(f"    Class ID  : {workout.class_id}")
@@ -136,7 +136,7 @@ def create_workout_flow(coach_id, workout_service, class_service, registration_s
         print(f"Error: {e}")
 
 def view_workouts_flow(coach_id, workout_service):
-    workouts = workout_service.get_workouts_by_coach(coach_id)
+    workouts = workout_service.get_workout_by_coach(coach_id)
 
     if not workouts:
         print("No workout found.")

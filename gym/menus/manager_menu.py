@@ -516,3 +516,7 @@ def manager_menu(user_service):
         elif choice == "6":
             print("Logging out...")
             return
+
+
+
+    

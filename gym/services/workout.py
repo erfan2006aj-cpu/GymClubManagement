@@ -137,12 +137,26 @@ class WorkoutService:
     def load_all(self):
         storage = Storage(WORKOUTS_FILE)
         workouts = []
+        marker = "[WORKOUTS]"
+        inside_section = False
+
         for line in storage.read_lines():
-            if not line.strip():
+            text = line.strip()
+
+            if text.startswith("[") and text.endswith("]"):
+                inside_section = (text == marker)
                 continue
-            w = line_to_workout(line)
-            if w:
-                workouts.append(w)
+
+            if not inside_section or not text:
+                continue
+
+            try:
+                w = line_to_workout(text)
+                if w:
+                    workouts.append(w)
+            except Exception:
+                continue
+
         return workouts
     
     def save_all(self):
@@ -287,7 +301,7 @@ class WorkoutService:
 
     def get_workout(self, workout_id):
         workout = self.find_by_id(workout_id)
-        if workout in None:
+        if workout is None:
             raise NotFoundError("Workout not found.")
         return workout
     

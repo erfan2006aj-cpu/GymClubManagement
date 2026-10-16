@@ -301,6 +301,100 @@ def class_management_menu(class_service, user_service, hall_service):
         
         else:
             print("Invalid choice. Please try again.")
+
+def subscription_management_menu(subscription_service, user_service):
+    while True:
+        print("\n==== Subscription & Payments ====")
+        print("1. Create Subscription for Member")
+        print("2. View All Subscriptions")
+        print("3. View Member Subscription Status")
+        print("4. Back")
+
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            try:
+                member_id = input("Member ID: ").strip()
+                member = user_service.find_by_id(member_id)
+                if member is None:
+                    print(f"Error: No user found with ID {member_id}.")
+                    continue
+
+                print("\nAvailable plans:")
+                for kind, plan in subscription_service.list_plans():
+                    print(f"  {kind}: {plan['name']} - {plan['cost']}")
+
+                kind = input("Choose plan: ").strip()
+                price = subscription_service.get_plan_price(kind)
+                sub = subscription_service.create_subscription(
+                    member_id=member.id, kind=kind, amount=price,
+                )
+                print(f"OK! Tracking: {sub.tracking_number}")
+            except Exception as e:
+                print(f"Error: {e}")
+
+        elif choice == "2":
+            subs = subscription_service.list_all()
+            if not subs:
+                print("No subscriptions found.")
+            else:
+                for s in subs:
+                    print(f"ID={s.id} | Member={s.member_id} | Type={s.subscription_type} | Amount={s.amount} | Tracking={s.tracking_number}")
+
+        elif choice == "3":
+            try:
+                member_id = input("Member ID: ").strip()
+                member = user_service.find_by_id(member_id)
+                if member is None:
+                    print(f"Error: No user found with ID {member_id}.")
+                    continue
+                status = subscription_service.get_member_status(member.id)
+                print(f"Subscription status: {status}")
+            except Exception as e:
+                print(f"Error: {e}")
+
+        elif choice == "4":
+            return
+        else:
+            print("Invalid choice.")
+
+
+def reports_menu(subscription_service, user_service, class_service):
+    while True:
+        print("\n==== Reports ====")
+        print("1. Active Members")
+        print("2. Active Coaches")
+        print("3. Active Classes")
+        print("4. Total Income")
+        print("5. Back")
+
+        choice = input("Choose an option: ").strip()
+
+        try:
+            if choice == "1":
+                users = user_service.list_all()
+                count = sum(1 for u in users if u.role == "member" and u.is_active)
+                print(f"Active members: {count}")
+            elif choice == "2":
+                users = user_service.list_all()
+                count = sum(1 for u in users if u.role == "coach" and u.is_active)
+                print(f"Active coaches: {count}")
+            elif choice == "3":
+                classes = class_service.get_all_classes()
+                count = sum(1 for c in classes if c.is_active)
+                print(f"Active classes: {count}")
+            elif choice == "4":
+                total = subscription_service.total_income()
+                print(f"Total income: {total:,}")
+            elif choice == "5":
+                return
+            else:
+                print("Invalid choice.")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+
 def manager_menu(user_service):
     # feature/halls-classes
 
@@ -311,12 +405,20 @@ def manager_menu(user_service):
     hall_service = HallService()
     class_service = ClassService()
     
+    from gym.services.subscriptions import SubscriptionService
+    from gym.services.wallet import WalletService
+    
+    subscription_service = SubscriptionService()
+    wallet_service = WalletService(user_service, subscription_service)
+
     while True:
         print("\n==== Manager Menu ====")
         print("1. User Management")
         print("2. Hall Management")
         print("3. Class Management")
-        print("4. Logout")
+        print("4. Subscription & Payments")
+        print("5. View Reports")
+        print("6. Logout")
         
         choice = input("Choose an option: ").strip()
         
@@ -413,7 +515,9 @@ def manager_menu(user_service):
         
                
         elif choice == "4":
+            subscription_management_menu(subscription_service, user_service)
+        elif choice == "5":
+            reports_menu(subscription_service, user_service, class_service)
+        elif choice == "6":
             print("Logging out...")
             return
-        else:
-            print("Invalid choice. Please try again.")

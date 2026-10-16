@@ -88,8 +88,36 @@ class ClassService:
         print("Class added successfully.")
 
     def get_all_classes(self):
+        feature/halls-classes
+        lines = self.storage.read_lines()
+        data = "\n".join(lines)
+        classes = []
+        for line in data.splitlines():
+            parts = line.split(",")
+            if parts[0] == "CLASS":
+                if len(parts) == 7:
+                    schedule = "Not specified"
+                    is_active = parts[6] == "True"
+                elif len(parts) == 8:
+                    schedule = parts[6]
+                    is_active = parts[7] == "True"
+                else:
+                    continue
+
+                gym_class = GymClass(
+                    id=parts[1],
+                    name=parts[2],
+                    coach_id=parts[3],
+                    hall_id=parts[4],
+                    capacity=int(parts[5]),
+                    schedule=schedule,
+                    is_active=is_active
+                )
+                classes.append(gym_class)
+        return classes
+
         
-        return list(self.classes)
+        
 
     def find_by_id(self, class_id):
         
@@ -97,3 +125,4 @@ class ClassService:
             if str(gym_class.id) == str(class_id):
                 return gym_class
         return None
+        main

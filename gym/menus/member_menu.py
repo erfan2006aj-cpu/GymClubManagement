@@ -178,6 +178,15 @@ class MemberMenu:
             )
             print(f"OK! Subscription active until {sub.end_date:%Y-%m-%d %H:%M}")
             print(f"Tracking number: {sub.tracking_number}")
+
+            trans = self.wallet_service._record(
+                member_id=self.member.id,
+                tx_type="payment",
+                amount=price,
+                description=f"Purchase {sub.subscription_type}",
+                tracking_number=str(sub.tracking_number),
+            )
+
         except ValueError as e:
             self.member.wallet_balance += price
             if self.user_service:

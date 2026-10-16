@@ -69,13 +69,9 @@ class HallService:
         self.storage.write_lines(lines)
 
     def add_hall(self, hall):
-      #feature/halls-classes
+        # feature/halls-classes
         all_halls = self.get_all_halls()
         for existing_hall in all_halls:
-
-        
-        
-        main
             if str(existing_hall.id) == str(hall.id):
                 print("This hall ID already exists.")
                 return

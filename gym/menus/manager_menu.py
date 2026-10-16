@@ -302,10 +302,7 @@ def class_management_menu(class_service, user_service, hall_service):
         else:
             print("Invalid choice. Please try again.")
 def manager_menu(user_service):
-      #feature/halls-classes
-
-
-    
+    # feature/halls-classes
 
 
     from gym.services.halls import HallService
@@ -314,7 +311,6 @@ def manager_menu(user_service):
     hall_service = HallService()
     class_service = ClassService()
     
-      main
     while True:
         print("\n==== Manager Menu ====")
         print("1. User Management")
@@ -327,7 +323,7 @@ def manager_menu(user_service):
         if choice == "1":
             user_management_menu(user_service)
         elif choice == "2":
-      #feature/halls-classes
+    # feature/halls-classes
             while True:
                 print("\n===== Hall Management =====")
                 print("1. Add Hall")
@@ -416,7 +412,6 @@ def manager_menu(user_service):
             
         
                
-        main
         elif choice == "4":
             print("Logging out...")
             return

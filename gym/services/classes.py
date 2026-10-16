@@ -125,4 +125,4 @@ class ClassService:
             if str(gym_class.id) == str(class_id):
                 return gym_class
         return None
-        main
+

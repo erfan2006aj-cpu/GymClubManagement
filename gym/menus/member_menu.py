@@ -1,12 +1,13 @@
 from gym.services.registrations import Registration_service
 class MemberMenu:
-    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service,wallet_service=None,user_service=None):
+    def __init__(self, member, registration_service: Registration_service,class_service, subscription_service,wallet_service=None,user_service=None, workout_service=None):
         self.member = member
         self.registration_service = registration_service
         self.class_service = class_service
         self.subscription_service = subscription_service
         self.wallet_service = wallet_service
         self.user_service = user_service
+        self.workout_service = workout_service
 
     def show(self):
         while True:
@@ -22,6 +23,7 @@ class MemberMenu:
                 print("6. Buy subscription")
                 print("7. Charge wallet")
                 print("8. My transactions")
+                print("9. My Workout Plan")
                 print("0. Exit")
                 choice = input("Choose an option: ")
 
@@ -41,6 +43,9 @@ class MemberMenu:
                     self.charge_wallet()
                 elif choice == "8":
                     self.show_transactions()
+                elif choice == "9":
+                    self.show_workout_plan()
+
                 elif choice == "0":
                     break
                 else:
@@ -216,4 +221,30 @@ class MemberMenu:
             date_str = t.date.strftime("%Y-%m-%d %H:%M")
             print(f"{date_str:<18} {t.transaction_type:<10} "
                   f"{t.amount:<12} {t.tracking_number:<12} {t.description}")
+
+
+    def show_workout_plan(self):
+        if self.workout_service is None:
+            print("Workout service not available.")
+            return
+
+        try:
+            workouts = self.workout_service.get_workouts_by_member(self.member.id)
+        except Exception as e:
+            print(f"Error: {e}")
+            return
+
+        if not workouts:
+            print("You don't have any workout plan.")
+            return
+
+        for w in workouts:
+            print(f"\n--- Workout ID: {w.id} | Class ID: {w.class_id} | Coach ID: {w.coach_id} ---")
+            if not w.exercises:
+                print("  (No exercises yet)")
+                continue
+            for i, ex in enumerate(w.exercises, 1):
+                print(f"  [{i}] {ex.name}")
+                print(f"      Sets: {ex.sets} | Reps: {ex.reps} | Rest: {ex.rest_time}s")
+                print(f"      {ex.description or '-'}")
 

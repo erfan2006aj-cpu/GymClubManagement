@@ -8,7 +8,7 @@ WORKOUTS_FILE = "data/gym_data.txt"
 
 def workout_to_line(workout):
     #Workout --> String
-    exercise_str= ";" .join(f"{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
+    exercise_str= ";" .join(f"{ex.name},{ex.sets},{ex.reps},{ex.rest_time},{ex.description}"
         for ex in workout.exercises
     )
     return(
@@ -235,7 +235,7 @@ class WorkoutService:
 
         self.workouts.append(workout)
         self.next_id += 1
-        self._save_all()
+        self.save_all()
 
         return workout
     

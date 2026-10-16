@@ -1,80 +1,193 @@
-GymClubManagement
+# Gym Club Management System
 
-A Python-based gym club management system developed as the final project of the Quera Python Bootcamp, Series 13.
+A Python-based command-line application for managing gym operations. The system provides separate workflows for managers, coaches, and members, covering user management, gym halls, classes, registrations, subscriptions, wallet transactions, and workout plans.
 
-Project Overview
+The project follows a modular structure that separates user interfaces, business logic, data models, and file operations. Application data is stored in a shared text file.
 
-GymClubManagement is a terminal-based gym management system designed to manage common gym operations using Python.
+## Features
 
-User Roles
+### User Management and Authentication
 
-The system is designed for three main user roles:
+- Role-based login flows for managers, coaches, and members.
+- User creation and account management.
+- Account activation and deactivation.
+- Input validation for usernames, passwords, and email addresses.
 
-- Manager: Manages users, halls, group classes, subscriptions, payments, and reports.
-- Trainer: Views assigned classes and manages workout plans for eligible members.
-- Member: Views profile and subscription information, manages wallet operations, joins group classes, and views workout plans.
+### Gym Management
 
-Main Features
+- Create and manage gym halls.
+- Create and manage gym classes.
+- Assign coaches and halls to classes.
+- Manage class availability.
 
+### Class Registration
 
-- User Management: Add, edit, activate, deactivate, and view trainer and member accounts.
-- Hall Management: Manage gym halls, including their capacity and equipment.
-- Group Class Management: Manage classes, trainers, halls, schedules, and capacities.
-- Subscription Management: Create subscriptions and manage payments and status.
-- Wallet Management: View balances, charge wallets, and track transactions.
-- Class Registration: Register for available classes and cancel registrations.
-- Workout Plans: Create, edit, and view workout plans.
-- Reports: Display management reports, including active members, trainers, classes, and total revenue.
+- Register members for classes.
+- Cancel class registrations.
+- Retrieve registration information for members and classes.
+- Generate tracking numbers for registrations.
 
-Technologies and Concepts
+### Subscription Management
 
-The project demonstrates the following Python concepts:
+- Monthly, three-month, and six-month subscription plans.
+- Subscription start and end dates.
+- Retrieve active subscriptions and subscription status.
+- View subscriptions by member.
+- Calculate total subscription income.
 
-- Data Structures
-- Functions
-- Object-Oriented Programming (OOP)
-- File Handling
-- Exception Handling
-- Input Validation and Regular Expressions
-- Git and GitHub for version control and collaboration
+### Wallet and Transactions
 
-Decorators and generators may be used for optional bonus features.
+- Retrieve member wallet balances.
+- Add funds to a wallet through a simulated payment API.
+- Pay for subscriptions using wallet funds.
+- Store financial transaction records.
+- Retrieve transaction history for individual members.
 
-Data Storage
+### Workout Management
 
-The project uses text-file storage. A database and a graphical user interface are not required.
+- Create and manage workout plans.
+- Add, edit, and remove exercises.
+- Retrieve workout plans by coach or member.
 
-Project Structure
+## Technologies
 
-- "main.py" — Application entry point.
-- "gym/" — Core modules, including models, services, and menus.
-- "bank/" — Banking-related project files.
-- "data/" — Data storage files.
-- "docs/" — Project documentation and flowcharts.
-- "requirements.txt" — Project dependencies.
+- **Python** — application logic and command-line interface.
+- **Object-oriented programming** — models and service classes.
+- **Text-file storage** — persistent application data.
+- **Regular expressions** — input validation.
+- **Python standard library** — file paths, date handling, and other utility operations.
 
-Requirements
-.Python 3.10 or higher
+The project does not require a separate database server.
 
-How to Run
-1. Install Python 3.10 or higher
-2. Clone or download the repository.
-3. Open the project in PyCharm or another Python IDE.
-4. Make sure Python is installed.
-5. Install the dependencies listed in "requirements.txt", if needed.
-6. Run "main.py".
-7. Follow the instructions displayed in the terminal.
+## Getting Started
 
-Default Admin Login
+### Prerequisites
 
-use the following credentials to log in as an administrator:
-.Username: admin
-.Password: admin@123
+- Python installed on your system.
+- Git, if you want to clone the repository.
 
-Development Status
+### Installation
 
-This is a collaborative educational project developed as part of the Quera Python Bootcamp. Individual features may still be under development or integration.
+Clone the repository:
 
-Purpose
+```bash
+git clone https://github.com/erfan2006aj-cpu/GymClubManagement.git
+cd GymClubManagement
+```
 
-The primary goal of this project is to practice Python programming, software organization, file handling, validation, exception handling, and collaborative development using Git and GitHub.
+### Running the Application
+
+Run the following command from the project root:
+
+```bash
+python main.py
+```
+
+On Windows, you can also use:
+
+```bash
+py main.py
+```
+
+The application displays a command-line menu through which users can access the available manager, coach, and member workflows.
+
+## Project Structure
+
+```text
+GymClubManagement/
+├── bank/
+│   ├── __init__.py
+│   └── Bank.py
+├── data/
+│   └── gym_data.txt
+├── docs/
+│   └── flowcharts/
+│       └── README.md
+├── gym/
+│   ├── __init__.py
+│   ├── constants.py
+│   ├── decorators.py
+│   ├── exceptions.py
+│   ├── models.py
+│   ├── storage.py
+│   ├── utils.py
+│   ├── validators.py
+│   ├── menus/
+│   │   ├── manager_menu.py
+│   │   ├── member_menu.py
+│   │   ├── start_menu.py
+│   │   └── trainer_menu.py
+│   └── services/
+│       ├── auth.py
+│       ├── classes.py
+│       ├── halls.py
+│       ├── registrations.py
+│       ├── subscriptions.py
+│       ├── users.py
+│       ├── wallet.py
+│       └── workout.py
+└── main.py
+```
+
+## Architecture
+
+The application is organized into modules with distinct responsibilities.
+
+- **`main.py`** — starts the application and routes users to the appropriate login flow and menu.
+- **`gym/menus/`** — contains the command-line interfaces for managers, coaches, and members.
+- **`gym/services/`** — implements authentication, user management, halls, classes, registrations, subscriptions, wallet operations, and workout plans.
+- **`gym/models.py`** — defines the application's domain models.
+- **`gym/storage.py`** — provides reusable text-file operations through the `Storage` class.
+- **`gym/validators.py`** — contains input-validation functions.
+- **`gym/exceptions.py`** — defines application-specific exceptions.
+- **`gym/utils.py`** — contains shared utility functions.
+- **`bank/Bank.py`** — provides a simulated local payment API.
+
+## Data Storage
+
+Application data is stored in:
+
+```text
+data/gym_data.txt
+```
+
+The shared text file contains categorized records for entities such as users, halls, classes, registrations, subscriptions, and transactions.
+
+Section markers separate different record categories. Individual services interpret and update their corresponding records, while the `Storage` class provides the underlying file operations.
+
+The project uses file-based persistence rather than a relational database. It does not provide database-level transactions, concurrency control, or database integrity constraints.
+
+## Subscription Plans
+
+The subscription service defines the following plans:
+
+| Plan | Duration |
+|---|---:|
+| Monthly | 30 days |
+| Three Months | 90 days |
+| Six Months | 180 days |
+
+Subscription prices and durations are defined in the application code.
+
+## Limitations
+
+The current implementation is intended as a command-line software project and is not designed for production use with real customer or financial data.
+
+- **File-based persistence:** Application data is stored in a shared text file rather than a database.
+- **Simulated payments:** Payment processing does not use a real banking service.
+- **Security:** Additional security measures are needed before the application can safely handle real user accounts and financial information.
+- **Automated testing:** No automated test suite is included in the current project structure.
+- **Activity logging:** The `gym/decorators.py` file exists, but a logging decorator has not been implemented in the current version.
+
+## Future Improvements
+
+- Migrate from text-file storage to a database such as SQLite.
+- Improve password security and authentication.
+- Integrate a secure, real payment provider.
+- Add automated unit and integration tests.
+- Implement structured logging and activity auditing.
+- Improve configuration management and data consistency.
+
+## Project Status
+
+Gym Club Management System is a modular command-line application for managing core gym operations. Its current implementation focuses on role-based workflows, service-level business logic, and text-file persistence.

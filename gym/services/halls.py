@@ -98,3 +98,8 @@ class HallService:
             if str(hall.id) == str(hall_id):
                 return hall
         return None
+
+    def set_active(self, hall, is_active):
+        hall.is_active = is_active
+        self._save()
+        return hall

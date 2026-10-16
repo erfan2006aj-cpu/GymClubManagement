@@ -302,7 +302,7 @@ def class_management_menu(class_service, user_service, hall_service):
         else:
             print("Invalid choice. Please try again.")
 def manager_menu(user_service):
-      feature/halls-classes
+      #feature/halls-classes
 
 
     
@@ -327,7 +327,7 @@ def manager_menu(user_service):
         if choice == "1":
             user_management_menu(user_service)
         elif choice == "2":
-      feature/halls-classes
+      #feature/halls-classes
             while True:
                 print("\n===== Hall Management =====")
                 print("1. Add Hall")

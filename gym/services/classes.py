@@ -88,7 +88,7 @@ class ClassService:
         print("Class added successfully.")
 
     def get_all_classes(self):
-        feature/halls-classes
+        # feature/halls-classes
         lines = self.storage.read_lines()
         data = "\n".join(lines)
         classes = []
@@ -114,7 +114,7 @@ class ClassService:
                     is_active=is_active
                 )
                 classes.append(gym_class)
-        return classes
+        return list(self.classes)
 
         
         

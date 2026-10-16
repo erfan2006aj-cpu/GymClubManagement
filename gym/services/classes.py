@@ -126,3 +126,8 @@ class ClassService:
                 return gym_class
         return None
 
+
+    def set_active(self, gym_class, is_active):
+        gym_class.is_active = is_active
+        self._save()
+        return gym_class

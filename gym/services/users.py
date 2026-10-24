@@ -321,3 +321,5 @@ class UserService:
             raise
 
         return user
+    def save(self):
+        self._save()

@@ -2,6 +2,7 @@ from datetime import datetime
 import random
 from gym.models import Registration
 from gym.storage import Storage
+from gym.exceptions import InsufficientBalanceError
 DATA_PATH = "data/gym_data.txt"
 class Registration_service:
     def __init__(self, class_service):
@@ -19,7 +20,7 @@ class Registration_service:
 
     def find_active(self, member_id: int, class_id: int):
         for r in self.registrations:
-            if (r.member_id == member_id and r.class_id == class_id and r.is_active):
+            if (str(r.member_id) == str(member_id) and str(r.class_id) == str(class_id) and r.is_active):
                 return r
         return None
 
@@ -43,6 +44,13 @@ class Registration_service:
 
         if not subscription_service.has_active_subscription(member.id):
             raise ValueError("You do not have subscription")
+        if hasattr(member, "wallet_balance"):
+            if member.wallet_balance < gym_class.price:
+                raise InsufficientBalanceError(
+                    f"Insufficient wallet balance."
+                    f"you need {gym_class.price}, but you have {member.walllet_balance}."
+                )
+            member.wallet_balance -= gym_class.price
 
         registration = Registration(
             id=self.next_id,
@@ -69,7 +77,7 @@ class Registration_service:
         return [r for r in self.registrations if r.member_id == member_id and r.is_active]
 
     def get_class_members(self, class_id: int) -> list[Registration]:
-        return [r for r in self.registrations if r.class_id == class_id and r.is_active]
+        return [r for r in self.registrations if str(r.class_id) == str(class_id) and r.is_active]
 
     def _load_registrations(self) -> list[Registration]:
         registrations = []

@@ -68,7 +68,12 @@ class ClassService:
         self.storage.write_lines(lines)
 
     def add_class(self, gym_class):
-        
+
+        # Check class capacity
+        if not isinstance(gym_class.capacity, int) or gym_class.capacity <= 0:
+            print("Class capacity must be a positive number.")
+            return
+
         # Check for duplicate ID
         for existing_class in self.classes:
             if str(existing_class.id) == str(gym_class.id):
@@ -86,7 +91,6 @@ class ClassService:
         self.classes.append(gym_class)
         self._save()
         print("Class added successfully.")
-
     def get_all_classes(self):
         # feature/halls-classes
         lines = self.storage.read_lines()
@@ -114,7 +118,7 @@ class ClassService:
                     is_active=is_active
                 )
                 classes.append(gym_class)
-        return list(self.classes)
+        return classes
 
         
         
